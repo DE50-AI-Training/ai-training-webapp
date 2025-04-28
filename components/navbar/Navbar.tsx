@@ -15,13 +15,10 @@ const Navbar = () => {
     ];
 
     return (
-        /* Placée en sticky tout en haut de la page */
         <nav className="sticky top-0 z-50 flex justify-center ">
-            <div className=" rounded-b-2xl bg-white shadow-sm px-10 w-full">
+            <div className="rounded-b-2xl bg-white shadow-sm px-10 w-full">
                 <ul className="flex gap-12 py-4">
                     {links.map(({ href, label }) => {
-                        // 1) le lien "/" n'est actif que sur la Home
-                        // 2) pour les autres, on accepte "/foo" ou "/foo/bar"
                         const active =
                             href === "/"
                                 ? pathname === "/"
@@ -43,7 +40,6 @@ const Navbar = () => {
                                 </Link>
 
                                 {active && (
-                                    /* Barre fine 100 % largeur sous l’onglet actif. Pas de changement de graisse → aucun décalage. */
                                     <span className="absolute left-0 -bottom-1 h-0.5 w-full rounded bg-black" />
                                 )}
                             </li>
