@@ -2,7 +2,10 @@ type DatasetBase = {
     name: string;
 };
 
-type Dataset = DatasetBase & {
+export type Dataset = DatasetBase & {
     id: string;
-    createdAt: string;
 };
+
+export type DatasetCreate = DatasetBase;
+
+export type DatasetUpdate = Partial<DatasetBase>;
