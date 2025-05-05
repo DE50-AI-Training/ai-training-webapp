@@ -6,7 +6,11 @@ export type Architecture = ArchitectureBase & {
     id: string;
 };
 
-export type MLPArchitecture = ArchitectureBase & {
+type MLPArchitectureBase = {
     activationFunction: ActivationFunction;
     layers: number;
 };
+
+export type MLPArchitecture = Architecture & MLPArchitectureBase;
+
+export type MLPArchitectureCreate = ArchitectureBase & MLPArchitectureBase;

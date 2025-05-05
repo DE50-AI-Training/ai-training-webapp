@@ -5,6 +5,7 @@ import Navbar from "@/components/navbar/Navbar";
 import { Provider } from "jotai";
 import HydrateAtoms from "./HydrateAtoms";
 import { getModels } from "@/lib/services/models";
+import { getDatasets } from "@/lib/services/dataset";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -28,7 +29,7 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     const models = await getModels();
-    const datasets: Dataset[] = [];
+    const datasets = await getDatasets();
 
     return (
         <Provider>
