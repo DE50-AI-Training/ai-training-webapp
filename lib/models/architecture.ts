@@ -1,13 +1,16 @@
-export type ActivationFunction = "relu" | "sigmoid" | "tanh";
+export type Activation = "relu" | "sigmoid" | "tanh";
 
-type ArchitectureBase = {};
+export type ProblemType = "classification" | "regression";
+
+export type ModelType = "MLP" | "CNN" | "RNN";
+
+type ArchitectureBase = { activation: Activation };
 
 export type Architecture = ArchitectureBase & {
     id: number;
 };
 
 type MLPArchitectureBase = {
-    activationFunction: ActivationFunction;
     layers: number[];
 };
 

@@ -7,7 +7,7 @@ export const getModels = async (): Promise<Model[]> => {
         throw new Error("Failed to fetch models");
     }
     const data = await response.json();
-    return data as Model[];
+    return data;
 };
 
 export const createModel = async (model: ModelCreate): Promise<Model> => {
@@ -22,7 +22,7 @@ export const createModel = async (model: ModelCreate): Promise<Model> => {
         throw new Error("Failed to create model");
     }
     const data = await response.json();
-    return data as Model;
+    return data;
 };
 
 export const updateModel = async (
@@ -40,5 +40,5 @@ export const updateModel = async (
         throw new Error("Failed to update model");
     }
     const data = await response.json();
-    return data as Model;
+    return data;
 };

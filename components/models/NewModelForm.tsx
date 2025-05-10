@@ -11,33 +11,28 @@ import { datasetsAtom } from "@/lib/atoms/datasetAtoms";
 import FormSelect from "./FormSelect";
 import MultipleSelector, { Option } from "../ui/MultipleSelector";
 import { ModelCreate } from "@/lib/models/model";
-import { createModel } from "@/lib/services/models";
 import { Input } from "../ui/Input";
-
-enum ProblemType {
-    CLASSIFICATION = "classification",
-}
-
-enum ModelType {
-    MLP = "mlp",
-}
+import { Activation, ModelType, ProblemType } from "@/lib/models/architecture";
+import { useRouter } from "next/navigation";
+import { useCreateModel } from "@/lib/hooks/useCreateModel";
 
 const NewModelForm = () => {
+    const router = useRouter();
+    const { create: createModel } = useCreateModel();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [name, setName] = useState("");
-    const [problemType, setProblemType] = useState<ProblemType>(
-        ProblemType.CLASSIFICATION,
-    );
+    const [problemType, setProblemType] =
+        useState<ProblemType>("classification");
     const [datasetId, setdatasetId] = useState<number | null>(null);
     const [columnsToClassify, setColumnsToClassify] = useState<Option[]>([]);
     const [columnsAsParameters, setColumnsAsParameters] = useState<Option[]>(
         [],
     );
-    const [selectedModel, setSelectedModel] = useState<ModelType>(
-        ModelType.MLP,
-    );
+    const [selectedModel, setSelectedModel] = useState<ModelType>("MLP");
     const [layers, setLayers] = useState<number[]>([0, 8, 8, 0]); // [input, hidden1, hidden2, output]
+    const [activationFunction, setActivationFunction] =
+        useState<Activation>("relu");
 
     const datasets = useAtomValue(datasetsAtom);
 
@@ -56,16 +51,19 @@ const NewModelForm = () => {
                 outputColumns: columnsToClassify.map((col) =>
                     Number(col.value),
                 ),
-                name: "New Model",
+                name,
                 mlpArchitecture:
-                    selectedModel === ModelType.MLP
+                    selectedModel === "MLP"
                         ? {
-                              activationFunction: "relu",
+                              activation: activationFunction,
                               layers,
                           }
                         : undefined,
             };
-            createModel(newModel);
+            const model = await createModel(newModel);
+            if (model) {
+                router.push(`/models/${model.id}`);
+            }
         } catch (error) {
             console.error("Error creating model:", error);
         } finally {
@@ -73,27 +71,33 @@ const NewModelForm = () => {
         }
     };
 
-    const datasetOptions = datasets.map((dataset) => ({
+    const datasetOptions: Option[] = datasets.map((dataset) => ({
         label: dataset.name,
         value: dataset.id.toString(),
     }));
 
-    const problemOptions = [
+    const problemOptions: Option[] = [
         {
             label: "Classification",
-            value: ProblemType.CLASSIFICATION,
+            value: "classification",
         },
     ];
 
-    const modelOptions = [
-        { label: "Multi-layer perceptron", value: ModelType.MLP },
+    const activationOptions: Option[] = [
+        { label: "ReLU", value: "relu" },
+        { label: "Sigmoid", value: "sigmoid" },
+        { label: "Tanh", value: "tanh" },
+    ];
+
+    const modelOptions: Option[] = [
+        { label: "Multi-layer perceptron", value: "MLP" },
     ];
 
     const selectedDataset = datasets.find(
         (dataset) => dataset.id === datasetId,
     );
 
-    const columnOptions = selectedDataset
+    const columnOptions: Option[] = selectedDataset
         ? selectedDataset.columns
               .map((column, index) => ({
                   value: index.toString(),
@@ -194,12 +198,28 @@ const NewModelForm = () => {
                         </div>
 
                         {/* MLP Layers table, only shown for perceptron model */}
-                        {selectedModel === ModelType.MLP && (
+                        {selectedModel === "MLP" && (
                             <MLPLayersTable
                                 layers={layers}
                                 setLayers={setLayers}
                             />
                         )}
+
+                        {/* Activation function selection */}
+                        <div className="space-y-3">
+                            <FormSection
+                                title="Activation function"
+                                tootipContent="Choose the activation function for the model"
+                            />
+                            <FormSelect
+                                value={activationFunction}
+                                onChange={(value) =>
+                                    setActivationFunction(value as Activation)
+                                }
+                                options={activationOptions}
+                                placeholder="Activation function"
+                            />
+                        </div>
 
                         {/* 4. Choose name section */}
                         <div className="space-y-3">
