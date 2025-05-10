@@ -1,14 +1,14 @@
 export type ActivationFunction = "relu" | "sigmoid" | "tanh";
 
-type ArchitectureBase = { inputSize: number; outputSize: number };
+type ArchitectureBase = {};
 
 export type Architecture = ArchitectureBase & {
-    id: string;
+    id: number;
 };
 
 type MLPArchitectureBase = {
     activationFunction: ActivationFunction;
-    layers: number;
+    layers: number[];
 };
 
 export type MLPArchitecture = Architecture & MLPArchitectureBase;

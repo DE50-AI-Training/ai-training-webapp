@@ -3,7 +3,8 @@ type DatasetBase = {
 };
 
 export type Dataset = DatasetBase & {
-    id: string;
+    id: number;
+    columns: string[];
 };
 
 export type DatasetCreate = DatasetBase;
