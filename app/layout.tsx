@@ -42,9 +42,6 @@ export default async function RootLayout({
                             <Navbar />
                             {children}
                         </main>
-                        <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-                            Small footer to show links for example
-                        </footer>
                     </body>
                 </html>
             </HydrateAtoms>

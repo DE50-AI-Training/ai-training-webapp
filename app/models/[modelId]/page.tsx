@@ -11,7 +11,7 @@ const Model = ({ params }: { params: { modelId: string } }) => {
     }
 
     return (
-        <div className="rounded-t-2xl bg-white shadow-sm px-10 w-full h-screen">
+        <div className="rounded-t-2xl bg-white shadow-sm px-10 w-full">
             Model: {model.name}
         </div>
     );

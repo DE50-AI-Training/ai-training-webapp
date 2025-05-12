@@ -4,7 +4,7 @@ import NewModelForm from "@/components/models/NewModelForm"
 
 export default function NewModelPage() {
   return (
-    <div className="container mx-auto py-10">
+    <div className="rounded-t-2xl bg-white shadow-sm px-10 w-full">
       <NewModelForm />
     </div>
   )
