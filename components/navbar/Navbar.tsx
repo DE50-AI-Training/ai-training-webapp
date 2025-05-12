@@ -17,7 +17,7 @@ const Navbar = () => {
     return (
         /* Placée en sticky tout en haut de la page */
         <nav className="sticky top-0 z-50 flex justify-center ">
-            <div className=" rounded-b-2xl bg-white shadow-sm px-10 w-full">
+            <div className=" rounded-b-2xl bg-white ring-2 ring-gray-200 px-10 w-full">
                 <ul className="flex gap-12 py-4">
                     {links.map(({ href, label }) => {
                         // 1) le lien "/" n'est actif que sur la Home
