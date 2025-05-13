@@ -38,7 +38,7 @@ export default async function RootLayout({
                     <body
                         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
                     >
-                        <main className="mx-auto w-full lg:max-w-[80%] xl:max-w-[90%] 2xl:max-w-[80%] 3xl:max-w-[1536px] flex flex-col gap-10">
+                        <main className="mx-auto w-full lg:max-w-[80%] xl:max-w-[90%] 2xl:max-w-[80%] 3xl:max-w-[1536px] flex flex-col gap-20">
                             <Navbar />
                             {children}
                         </main>

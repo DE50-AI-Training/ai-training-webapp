@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import DatasetCard from "@/components/datasetCard/DatasetCard";
 import {
@@ -13,12 +13,15 @@ import { Label } from "@/components/ui/Label";
 import { Button } from "@/components/ui/Button";
 import { useAtomValue } from "jotai";
 import { datasetsAtom } from "@/lib/atoms/datasetAtoms";
+import { useRouter } from "next/navigation";
 
 const Datasets = () => {
+    const router = useRouter();
+
     const datasets = useAtomValue(datasetsAtom);
 
     return (
-        <div className="flex w-full flex-col bg-white mt-10 rounded-lg ring-2 ring-gray-200 p-20 pt-6 pb-6">
+        <div className="flex w-full flex-col bg-white rounded-xl ring-1 ring-gray-200 p-20 pt-6 pb-6">
             <div className="pb-10">
                 <p className="text-center text-[35px] font-bold">
                     Training Data
@@ -55,7 +58,12 @@ const Datasets = () => {
                     <Button className="w-[120px] bg-gray-200 border border-black text-black">
                         Manage
                     </Button>
-                    <Button className="w-[120px] bg-gradient-to-br from-green-100 to-orange-100 text-black border border-black">
+                    <Button
+                        className="w-[120px] bg-gradient-to-br from-green-100 to-orange-100 text-black border border-black"
+                        onClick={() => {
+                            router.push("/datasets/new");
+                        }}
+                    >
                         New data +
                     </Button>
                 </div>
@@ -63,7 +71,7 @@ const Datasets = () => {
             <div className="grid grid-cols-4 gap-8 sm:grid-cols-8">
                 {datasets.map((d) => (
                     <div className=" col-span-4" key={d.id}>
-                        <DatasetCard key={d.id} />
+                        <DatasetCard key={d.id} dataset={d} />
                     </div>
                 ))}
             </div>

@@ -8,11 +8,12 @@ import { datasetsAtom } from "@/lib/atoms/datasetAtoms";
 const ModelCard = ({ model }: { model: Model }) => {
     const datasets = useAtomValue(datasetsAtom);
     const dataset = datasets.find((dataset) => dataset.id === model.datasetId);
+    const layers = model.mlpArchitecture?.layers || [];
 
     const networkType = model.mlpArchitecture ? "MLP" : "";
-    const inputLayer = 0;
-    const hiddenLayers = 0;
-    const outputLayer = 0;
+    const inputLayer = layers[0] || 0;
+    const hiddenLayers = layers.slice(1, -1).length || 0;
+    const outputLayer = layers[layers.length - 1] || 0;
     const activation = "relu";
 
     const isTraining = true;
@@ -23,9 +24,9 @@ const ModelCard = ({ model }: { model: Model }) => {
         <div className="w-full mx-auto my-5 font-sans rounded-lg shadow-lg border border-gray-300 bg-gradient-to-br from-violet-200 to-rose-100">
             {/* En-tête */}
             <div className="mb-1 pb-2 pl-4 p-3 ">
-                <h2 className="text-xl font-bold text-gray-800">
+                <a className="text-xl font-bold text-gray-800 underline" href={`/models/${model.id}`} >
                     {model.name}
-                </h2>
+                </a>
                 <p className="text-[12px] text-gray-600">{"LA DATE"}</p>
             </div>
 
@@ -60,19 +61,19 @@ const ModelCard = ({ model }: { model: Model }) => {
                         <strong className="font-medium text-gray-800 mr-1">
                             Input layer:
                         </strong>
-                        {inputLayer}
+                        {inputLayer} neurons
                     </p>
                     <p>
                         <strong className="font-medium text-gray-800 mr-1">
                             Hidden layers:
                         </strong>
-                        {hiddenLayers}
+                        {hiddenLayers} layers
                     </p>
                     <p>
                         <strong className="font-medium text-gray-800 mr-1">
                             Output layer:
                         </strong>
-                        {outputLayer}
+                        {outputLayer} neurons
                     </p>
                 </div>
                 <hr className="border-gray-200 my-3" /> {/* Séparateur */}

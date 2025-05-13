@@ -13,12 +13,14 @@ import { Label } from "@/components/ui/Label";
 import { Button } from "@/components/ui/Button";
 import { useAtomValue } from "jotai";
 import { modelsAtom } from "@/lib/atoms/modelAtoms";
+import { useRouter } from "next/navigation";
 
 const Models = () => {
+    const router = useRouter();
     const models = useAtomValue(modelsAtom);
 
     return (
-        <div className="flex w-full flex-col bg-white mt-10 rounded-lg ring-2 ring-gray-200 p-20 pt-6 pb-6">
+        <div className="flex w-full flex-col bg-white rounded-xl ring-1 ring-gray-200 p-20 pt-6 pb-6">
             <div className="pb-10">
                 <p className="text-center text-[35px] font-bold">Models</p>
             </div>
@@ -53,7 +55,12 @@ const Models = () => {
                     <Button className="w-[120px] bg-gray-200 border border-black text-black">
                         Manage
                     </Button>
-                    <Button className="w-[120px] bg-gradient-to-br from-violet-200 to-rose-100 text-black border border-black">
+                    <Button
+                        className="w-[120px] bg-gradient-to-br from-violet-200 to-rose-100 text-black border border-black"
+                        onClick={() => {
+                            router.push("/models/new");
+                        }}
+                    >
                         New model +
                     </Button>
                 </div>

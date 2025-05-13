@@ -16,7 +16,7 @@ const Navbar = () => {
 
     return (
         <nav className="sticky top-0 z-50 flex justify-center ">
-            <div className=" rounded-b-2xl bg-white ring-2 ring-gray-200 px-10 w-full">
+            <div className="rounded-b-2xl bg-white ring-1 ring-gray-200 px-10 w-full shadow-sm">
                 <ul className="flex gap-12 py-4">
                     {links.map(({ href, label }) => {
                         const active =
