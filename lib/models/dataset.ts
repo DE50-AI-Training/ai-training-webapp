@@ -1,3 +1,5 @@
+export type DatasetType = "csv";
+
 type DatasetBase = {
     name: string;
 };
@@ -5,6 +7,10 @@ type DatasetBase = {
 export type Dataset = DatasetBase & {
     id: number;
     columns: string[];
+    rowCount: number;
+    createdAt: string;
+    datasetType: DatasetType;
+    originalFileName: string;
 };
 
 export type DatasetCreate = DatasetBase;
