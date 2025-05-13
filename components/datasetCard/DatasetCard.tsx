@@ -23,7 +23,7 @@ const DatasetCard = ({ dataset }: { dataset: Dataset }) => {
             </div>
 
             {/* Contenu principal */}
-            <div className="text-sm bg-gray-50 rounded-lg text-grey-700 border border-gray-300 space-y-2 mx-2 p-3 py-3 ">
+            <div className="text-sm bg-gray-50 rounded-lg text-gray-700 border border-gray-300 space-y-2 mx-2 p-3 py-3 ">
                 {" "}
                 {/* Ajoute de l'espace entre les sections */}
                 {/* Section 1: Dataset */}

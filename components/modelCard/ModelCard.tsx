@@ -31,7 +31,7 @@ const ModelCard = ({ model }: { model: Model }) => {
             </div>
 
             {/* Contenu principal */}
-            <div className="text-sm bg-gray-50 rounded-lg text-grey-700 border border-gray-300 space-y-2 mx-2 p-3 py-3 ">
+            <div className="text-sm bg-gray-50 rounded-lg text-gray-700 border border-gray-300 space-y-2 mx-2 p-3 py-3 ">
                 {/* Section 1: Dataset */}
                 <div className="space-y-0">
                     {/* Espace entre les lignes de la section */}
