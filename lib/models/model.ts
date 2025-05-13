@@ -2,7 +2,9 @@ import { MLPArchitecture, MLPArchitectureCreate } from "./architecture";
 
 type ModelBase = {
     name: string;
-    datasetId: string;
+    datasetId: number;
+    inputColumns: number[];
+    outputColumns: number[];
 };
 
 export type Model = ModelBase & {

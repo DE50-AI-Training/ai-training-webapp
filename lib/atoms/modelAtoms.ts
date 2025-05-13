@@ -8,7 +8,7 @@ export const addModelAtom = atom(null, (get, set, newModel: Model) => {
     set(modelsAtom, [...models, newModel]);
 });
 
-export const removeModelAtom = atom(null, (get, set, modelId: string) => {
+export const removeModelAtom = atom(null, (get, set, modelId: number) => {
     const models = get(modelsAtom);
     set(
         modelsAtom,
