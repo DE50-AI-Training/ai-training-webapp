@@ -7,6 +7,7 @@ export const getModels = async (): Promise<Model[]> => {
         throw new Error("Failed to fetch models");
     }
     const data = await response.json();
+    console.log("Models fetched:", data);
     return data as Model[];
 };
 

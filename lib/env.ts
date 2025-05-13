@@ -1,9 +1,5 @@
-const getEnvVar = (key: string) => {
-    const value = process.env[key];
-    if (!value) {
-        throw new Error(`Missing environment variable: ${key}`);
-    }
-    return value;
-};
+if (!process.env.NEXT_PUBLIC_BACKEND_URL) {
+    throw new Error("Missing NEXT_PUBLIC_BACKEND_URL");
+}
 
-export const BACKEND_URL = getEnvVar("NEXT_PUBLIC_BACKEND_URL");
+export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
