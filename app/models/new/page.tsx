@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import NewModelForm from "@/components/models/NewModelForm"
+import NewModelForm from "@/components/models/NewModelForm";
 
 export default function NewModelPage() {
-  return (
-    <div className="rounded-t-2xl bg-white shadow-sm px-10 w-full">
-      <NewModelForm />
-    </div>
-  )
+    return (
+        <div className="bg-white rounded-xl ring-1 ring-gray-200 p-20 pt-6 pb-6">
+            <NewModelForm />
+        </div>
+    );
 }
