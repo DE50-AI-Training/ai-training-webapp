@@ -1,8 +1,11 @@
+import { cache } from "react";
 import { BACKEND_URL } from "../env";
 import { Model, ModelCreate, ModelUpdate } from "../models/model";
 
 export const getModels = async (): Promise<Model[]> => {
-    const response = await fetch(`${BACKEND_URL}/models`);
+    const response = await fetch(`${BACKEND_URL}/models`, {
+        cache: "no-store",
+    });
     if (!response.ok) {
         throw new Error("Failed to fetch models");
     }

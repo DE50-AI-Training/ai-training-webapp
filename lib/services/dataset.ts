@@ -2,7 +2,9 @@ import { BACKEND_URL } from "../env";
 import { Dataset, DatasetCreate, DatasetUpdate } from "../models/dataset";
 
 export const getDatasets = async (): Promise<Dataset[]> => {
-    const response = await fetch(`${BACKEND_URL}/datasets`);
+    const response = await fetch(`${BACKEND_URL}/datasets`, {
+        cache: "no-store",
+    });
     if (!response.ok) {
         throw new Error("Failed to fetch datasets");
     }
