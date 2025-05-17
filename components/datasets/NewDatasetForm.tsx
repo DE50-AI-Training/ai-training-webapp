@@ -20,9 +20,9 @@ const NewDatasetForm = () => {
     const [uploadedDataset, setUploadedDataset] = useState<Dataset | null>();
 
     const onSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         setIsSubmitting(true);
         try {
-            e.preventDefault();
             if (!uploadedDataset) {
                 return;
             }
