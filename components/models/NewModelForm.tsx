@@ -10,9 +10,9 @@ import { useAtomValue } from "jotai";
 import { datasetsAtom } from "@/lib/atoms/datasetAtoms";
 import FormSelect from "./FormSelect";
 import MultipleSelector, { Option } from "../ui/MultipleSelector";
-import { ModelCreate } from "@/lib/models/model";
+import { ModelCreate, ProblemType } from "@/lib/models/model";
 import { Input } from "../ui/Input";
-import { Activation, ModelType, ProblemType } from "@/lib/models/architecture";
+import { Activation, ModelType } from "@/lib/models/architecture";
 import { useRouter } from "next/navigation";
 import { useCreateModel } from "@/lib/hooks/useCreateModel";
 
@@ -52,6 +52,7 @@ const NewModelForm = () => {
                     Number(col.value),
                 ),
                 name,
+                problemType,
                 mlpArchitecture:
                     selectedModel === "MLP"
                         ? {

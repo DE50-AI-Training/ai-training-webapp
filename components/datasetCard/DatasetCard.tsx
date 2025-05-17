@@ -103,7 +103,6 @@ const DatasetCard = ({ dataset }: { dataset: Dataset }) => {
                     </TooltipProvider>
                 </div>
 
-                {/* Bouton Stop */}
                 <div className="flex items-center space-x-2">
                     <a
                         className="underline text-[13px]"
