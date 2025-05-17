@@ -16,7 +16,7 @@ import { Activation, ModelType, ProblemType } from "@/lib/models/architecture";
 import { useRouter } from "next/navigation";
 import { useCreateModel } from "@/lib/hooks/useCreateModel";
 
-const NewModelForm = () => {
+const NewModelForm = ({ baseDatasetId }: { baseDatasetId: number | null }) => {
     const router = useRouter();
     const { create: createModel } = useCreateModel();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,7 +24,7 @@ const NewModelForm = () => {
     const [name, setName] = useState("");
     const [problemType, setProblemType] =
         useState<ProblemType>("classification");
-    const [datasetId, setdatasetId] = useState<number | null>(null);
+    const [datasetId, setdatasetId] = useState<number | null>(baseDatasetId);
     const [columnsToClassify, setColumnsToClassify] = useState<Option[]>([]);
     const [columnsAsParameters, setColumnsAsParameters] = useState<Option[]>(
         [],
@@ -133,110 +133,124 @@ const NewModelForm = () => {
                 </div>
 
                 {/* 2. Problem type section */}
-                <div className="space-y-3">
-                    <FormSection
-                        title="2. Select problem type"
-                        tootipContent="Choose the type of problem to solve"
-                    />
-                    <FormSelect
-                        value={problemType}
-                        onChange={(value) =>
-                            setProblemType(value as ProblemType)
-                        }
-                        options={problemOptions}
-                        placeholder="Problem type"
-                    />
-                    {/* Commented select elements */}
-                    <MultipleSelector
-                        options={columnOptions}
-                        placeholder="Columns to be classified"
-                        onChange={(value) => {
-                            setColumnsToClassify(value);
-                            setLayers((prev) => {
-                                const newLayers = [...prev];
-                                newLayers[newLayers.length - 1] = value.length;
-                                return newLayers;
-                            });
-                        }}
-                        value={columnsToClassify}
-                        className="w-1000² mx-auto"
-                    />
-                    <MultipleSelector
-                        options={columnOptions}
-                        placeholder="Columns used as parameters"
-                        onChange={(value) => {
-                            setColumnsAsParameters(value);
-                            setLayers((prev) => {
-                                const newLayers = [...prev];
-                                newLayers[0] = value.length;
-                                return newLayers;
-                            });
-                        }}
-                        value={columnsAsParameters}
-                        className="w-sm mx-auto"
-                    />
-                </div>
-
-                {/* 3. Architecture selection section */}
-                <div className="space-y-3 ">
-                    <FormSection
-                        title="3. Choose architecture"
-                        tootipContent="Choose the type of model to train"
-                    />
-                    <FormSelect
-                        value={selectedModel}
-                        onChange={(value) =>
-                            setSelectedModel(value as ModelType)
-                        }
-                        options={modelOptions}
-                        placeholder="Select model"
-                    />
-                </div>
-
-                {/* MLP Layers table, only shown for perceptron model */}
-                {selectedModel === "MLP" && (
-                    <MLPLayersTable layers={layers} setLayers={setLayers} />
+                {datasetId && (
+                    <div className="space-y-3">
+                        <FormSection
+                            title="2. Select problem type"
+                            tootipContent="Choose the type of problem to solve"
+                        />
+                        <FormSelect
+                            value={problemType}
+                            onChange={(value) =>
+                                setProblemType(value as ProblemType)
+                            }
+                            options={problemOptions}
+                            placeholder="Problem type"
+                        />
+                        {/* Commented select elements */}
+                        <MultipleSelector
+                            options={columnOptions}
+                            placeholder="Columns to be classified"
+                            onChange={(value) => {
+                                setColumnsToClassify(value);
+                                setLayers((prev) => {
+                                    const newLayers = [...prev];
+                                    newLayers[newLayers.length - 1] =
+                                        value.length;
+                                    return newLayers;
+                                });
+                            }}
+                            value={columnsToClassify}
+                            className="w-1000² mx-auto"
+                        />
+                        <MultipleSelector
+                            options={columnOptions}
+                            placeholder="Columns used as parameters"
+                            onChange={(value) => {
+                                setColumnsAsParameters(value);
+                                setLayers((prev) => {
+                                    const newLayers = [...prev];
+                                    newLayers[0] = value.length;
+                                    return newLayers;
+                                });
+                            }}
+                            value={columnsAsParameters}
+                            className="w-sm mx-auto"
+                        />
+                    </div>
                 )}
 
-                {/* Activation function selection */}
-                <div className="space-y-3 ">
-                    <FormSection
-                        title="Activation function"
-                        tootipContent="Choose the activation function for the model"
-                    />
-                    <FormSelect
-                        value={activationFunction}
-                        onChange={(value) =>
-                            setActivationFunction(value as Activation)
-                        }
-                        options={activationOptions}
-                        placeholder="Activation function"
-                    />
-                </div>
+                {/* 3. Architecture selection section */}
+                {!!(datasetId &&
+                    columnsToClassify.length &&
+                    columnsAsParameters.length) && (
+                        <>
+                            <div className="space-y-3 ">
+                                <FormSection
+                                    title="3. Choose architecture"
+                                    tootipContent="Choose the type of model to train"
+                                />
+                                <FormSelect
+                                    value={selectedModel}
+                                    onChange={(value) =>
+                                        setSelectedModel(value as ModelType)
+                                    }
+                                    options={modelOptions}
+                                    placeholder="Select model"
+                                />
+                            </div>
 
-                {/* 4. Choose name section */}
-                <div className="mx-auto  space-y-3  max-w-sm">
-                    <FormSection title="4. Model name" />
-                    <Input
-                        type="text"
-                        placeholder="Model name"
-                        className=""
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                </div>
+                            {/* MLP Layers table, only shown for perceptron model */}
+                            {selectedModel === "MLP" && (
+                                <MLPLayersTable
+                                    layers={layers}
+                                    setLayers={setLayers}
+                                />
+                            )}
 
-                {/* Submit button */}
-                <div className="flex justify-center space-y-3">
-                    <Button
-                        type="submit"
-                        disabled={isSubmitting}
-                        variant="outline"
-                        className="px-8 py-2  font-semibold border border-gray-400  bg-gradient-to-r from-[#D97A7A77] to-[#A48DD377] rounded-md"
-                    >
-                        {isSubmitting ? "Creating..." : "Create"}
-                    </Button>
-                </div>
+                            {/* Activation function selection */}
+                            <div className="space-y-3 ">
+                                <FormSection
+                                    title="Activation function"
+                                    tootipContent="Choose the activation function for the model"
+                                />
+                                <FormSelect
+                                    value={activationFunction}
+                                    onChange={(value) =>
+                                        setActivationFunction(
+                                            value as Activation,
+                                        )
+                                    }
+                                    options={activationOptions}
+                                    placeholder="Activation function"
+                                />
+                            </div>
+
+                            {/* 4. Choose name section */}
+                            <div className="mx-auto  space-y-3  max-w-sm">
+                                <FormSection title="4. Model name" />
+                                <Input
+                                    type="text"
+                                    placeholder="Model name"
+                                    className=""
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                />
+                            </div>
+
+                            {/* Submit button */}
+                            <div className="flex justify-center space-y-3">
+                                <Button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    variant="outline"
+                                    className="px-8 py-2  font-semibold border border-gray-400  bg-gradient-to-r from-[#D97A7A77] to-[#A48DD377] rounded-md"
+                                >
+                                    {isSubmitting ? "Creating..." : "Create"}
+                                </Button>
+                            </div>
+                        </>
+                    )}
             </form>
         </div>
     );
