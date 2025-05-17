@@ -1,7 +1,5 @@
 export type Activation = "relu" | "sigmoid" | "tanh";
 
-export type ProblemType = "classification" | "regression";
-
 export type ModelType = "MLP" | "CNN" | "RNN";
 
 type ArchitectureBase = { activation: Activation };
