@@ -5,20 +5,39 @@ import { Button } from "@/components/ui/Button";
 
 import { Input } from "../ui/Input";
 import { useRouter } from "next/navigation";
-import { uploadDataset } from "@/lib/services/dataset";
+import { createDataset, uploadDataset } from "@/lib/services/dataset";
 import { Dataset } from "@/lib/models/dataset";
 import { FormSection } from "../models/FormSection";
+import { useCreateDataset } from "@/lib/hooks/useCreateDataset";
 
 const NewDatasetForm = () => {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    /*  const { create: createDataset } = useCreateDataset(); */
+    const { create: createDataset } = useCreateDataset();
 
     const [name, setName] = useState("");
     const [uploadedDataset, setUploadedDataset] = useState<Dataset | null>();
 
-    const onSubmit = async (e: React.FormEvent) => {};
+    const onSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        try {
+            if (!uploadedDataset) {
+                return;
+            }
+            const dataset = await createDataset(uploadedDataset.id, {
+                name,
+            });
+            if (dataset) {
+                router.push(`/datasets`);
+            }
+        } catch (error) {
+            console.error("Error creating dataset:", error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <div className="flex flex-col justify-center mx-auto py-10 max-w-3xl">
@@ -37,6 +56,7 @@ const NewDatasetForm = () => {
                                     const newDataset =
                                         await uploadDataset(file);
                                     setUploadedDataset(newDataset);
+                                    setName(newDataset.name);
                                 } catch (error) {
                                     console.error(
                                         "Error uploading dataset:",
@@ -51,8 +71,12 @@ const NewDatasetForm = () => {
                 </div>
             </div>
             {uploadedDataset && (
-                <form onSubmit={onSubmit}>
-                    <div className="mx-auto  space-y-3  max-w-sm">
+                <form onSubmit={onSubmit} className="mt-6 space-y-3">
+                    <div className="mx-auto space-y-3 max-w-sm">
+                        <FormSection title="2. Data transformation" />
+                        Coming soon...
+                    </div>
+                    <div className="mx-auto space-y-3 max-w-sm">
                         <FormSection title="3. Dataset name" />
                         <Input
                             type="text"
@@ -62,6 +86,7 @@ const NewDatasetForm = () => {
                             onChange={(e) => setName(e.target.value)}
                         />
                     </div>
+
                     {/* Submit button */}
                     <div className="flex justify-center space-y-3">
                         <Button
