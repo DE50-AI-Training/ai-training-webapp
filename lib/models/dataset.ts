@@ -8,6 +8,7 @@ export type Dataset = DatasetBase & {
     id: number;
     columns: string[];
     rowCount: number;
+    uniqueValuesPerColumn: number[];
     createdAt: string;
     datasetType: DatasetType;
     originalFileName: string;
