@@ -1,6 +1,6 @@
 import { MLPArchitecture, MLPArchitectureCreate } from "./architecture";
 
-export type ProblemType = "classification";
+export type ProblemType = "classification" | "regression";
 
 type ModelBase = {
     name: string;
@@ -14,6 +14,11 @@ export type Model = ModelBase & {
     id: number;
     mlpArchitecture?: MLPArchitecture;
     createdAt: string;
+    lastBatchSize: number;
+    lastMaxEpochs: number | null;
+    lastLearningRate: number;
+    trainingTime: number;
+    epochsTrained: number;
 };
 
 export type ModelCreate = ModelBase & {

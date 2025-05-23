@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/Button";
 import { useAtomValue } from "jotai";
 import { modelsAtom } from "@/lib/atoms/modelAtoms";
 import { useRouter } from "next/navigation";
+import TrainingsPage from "@/components/models/TrainingFetcher";
 
 const Models = () => {
     const router = useRouter();
@@ -21,6 +22,7 @@ const Models = () => {
 
     return (
         <div className="flex w-full flex-col bg-white rounded-xl ring-1 ring-gray-200 p-20 pt-6 pb-6">
+            <TrainingsPage delay={1000} />
             <div className="pb-10">
                 <p className="text-center text-[35px] font-bold">Models</p>
             </div>

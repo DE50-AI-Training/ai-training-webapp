@@ -4,7 +4,12 @@ import { Label } from "@/components/ui/Label";
 import { Model } from "@/lib/models/model";
 import { useAtomValue } from "jotai";
 import { datasetsAtom } from "@/lib/atoms/datasetAtoms";
-import { StopIcon } from "@heroicons/react/24/outline";
+import { PlayIcon, StopIcon } from "@heroicons/react/24/outline";
+import { useTraining } from "@/lib/hooks/useTraining";
+import { TrainingStatus } from "@/lib/models/training";
+import { Spinner } from "../ui/Spinner";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
+import TrainPopover from "./TrainPopover";
 
 const ModelCard = ({ model }: { model: Model }) => {
     const datasets = useAtomValue(datasetsAtom);
@@ -19,8 +24,25 @@ const ModelCard = ({ model }: { model: Model }) => {
     const outputLayer = layers[layers.length - 1] || 0;
     const activation = "relu";
 
-    const isTraining = true;
-    const statusText = isTraining ? "Training..." : "Idle";
+    const { stop, training } = useTraining(model.id);
+    const trainingStatus = training?.status ?? "stopped";
+
+    const TRAINING_STATUS_MAP: Record<
+        TrainingStatus,
+        { text: string; color: string }
+    > = {
+        stopped: { text: "Stopped", color: "bg-red-400" },
+        starting: { text: "Starting", color: "bg-blue-400" },
+        training: {
+            text: `Training (${training?.epochs} / ${training?.maxEpochs})`,
+            color: "bg-lime-400",
+        },
+        stopping: { text: "Stopping", color: "bg-yellow-400" },
+        error: { text: "Error", color: "bg-red-400" },
+    };
+
+    const { text: trainingStatusText, color: trainingStatusColor } =
+        TRAINING_STATUS_MAP[trainingStatus];
 
     const date = new Date(model.createdAt);
     const formattedDate = date.toLocaleDateString("fr-FR", {
@@ -108,28 +130,44 @@ const ModelCard = ({ model }: { model: Model }) => {
                 <div className="flex items-center">
                     {/* Indicateur de statut */}
                     <span
-                        className={`inline-block w-3.5 h-3.5 ${isTraining ? "bg-lime-400" : "bg-gray-400"} rounded-full mr-2`}
+                        className={`inline-block w-3.5 h-3.5 ${trainingStatusColor} rounded-full mr-2`}
                     ></span>
                     {/* Texte de statut */}
-                    <span className="text-sm">{statusText}</span>
+                    <span className="text-sm mr-0.5">{trainingStatusText}</span>
+                    {trainingStatus !== "stopped" && (
+                        <Spinner className="w-3.5 h-3.5" />
+                    )}
                 </div>
 
                 {/* Bouton Stop */}
-                <div
-                    className="flex items-center space-x-0.5 cursor-pointer underline"
-                    onClick={() => {
-                        console.log("Stop training");
-                    }}
-                >
-                    <a className="text-sm">Stop</a>
-                    <StopIcon
-                        className="h-5 w-5  cursor-pointer"
-                        onClick={() => {
-                            // Handle stop action
-                            console.log("Stop training");
-                        }}
-                    />
-                </div>
+                {training ? (
+                    <div
+                        className="flex items-center space-x-0.5 cursor-pointer underline"
+                        onClick={stop}
+                    >
+                        <a className="text-sm">Stop</a>
+                        <StopIcon className="h-5 w-5  cursor-pointer" />
+                    </div>
+                ) : (
+                    <Popover>
+                        <PopoverTrigger
+                            className="flex items-center space-x-0.5 cursor-pointer underline"
+                            /* onClick={() => {
+                            train({
+                                batchSize: 1,
+                                maxEpochs: 100,
+                                learningRate: 0.001,
+                            });
+                        }} */
+                        >
+                            <a className="text-sm">Train</a>
+                            <PlayIcon className="h-5 w-5  cursor-pointer" />
+                        </PopoverTrigger>
+                        <PopoverContent>
+                            <TrainPopover model={model}/>
+                        </PopoverContent>
+                    </Popover>
+                )}
             </div>
         </div>
     );
