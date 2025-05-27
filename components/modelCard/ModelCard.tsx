@@ -151,34 +151,34 @@ const ModelCard = ({ model }: { model: Model }) => {
                         </div>
                     )}
                     {training?.status === "training" && (
-                        <div className="flex flex-row text-sm mr-1 items-center gap-2">
-                            {` ${training?.epochs} / ${training?.maxEpochs} epochs `}
-                        </div>
-                    )}
-                    {training?.status === "training" && (
-                        <TooltipProvider>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <InformationCircleIcon className="h-4 w-4 cursor-pointer" />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>
-                                        {`Batch size: ${training?.batchSize}`}
-                                    </p>
-                                    <p>
-                                        {`Epochs: ${training?.epochs} / ${training?.maxEpochs}`}
-                                    </p>
-                                    <p>
-                                        {`Learning rate: ${training?.learningRate}`}
-                                    </p>
-                                    <p>
-                                        {model.problemType === "classification"
-                                            ? `Accuracy: ${training?.score?.toFixed(2) ?? "Not available"}`
-                                            : `Mean Absolute Error: ${training?.score?.toFixed(2) ?? "Not available"}`}
-                                    </p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
+                        <>
+                            <div className="flex flex-row text-sm mr-1 items-center gap-2">
+                                {` ${training?.epochs} / ${training?.maxEpochs} epochs `}
+                            </div>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <InformationCircleIcon className="h-4 w-4 cursor-pointer" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>
+                                            {`Batch size: ${training?.batchSize}`}
+                                        </p>
+                                        <p>
+                                            {`Epochs: ${training?.epochs} / ${training?.maxEpochs}`}
+                                        </p>
+                                        <p>
+                                            {`Learning rate: ${training?.learningRate}`}
+                                        </p>
+                                        <p>
+                                            {model.problemType === "classification"
+                                                ? `Accuracy: ${training?.score?.toFixed(2) ?? "Not available"}`
+                                                : `Mean Absolute Error: ${training?.score?.toFixed(2) ?? "Not available"}`}
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </>
                     )}
                 </div>
 
