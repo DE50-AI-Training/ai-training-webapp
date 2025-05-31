@@ -18,7 +18,11 @@ const ModelCard = ({ model }: { model: Model }) => {
 
     const networkType = model.mlpArchitecture ? "MLP" : "";
     const problemType =
-        model.problemType === "classification" ? "Classification" : undefined;
+        model.problemType === "classification"
+            ? "Classification"
+            : model.problemType === "regression"
+              ? "Regression"
+              : "Unknown";
     const inputLayer = layers[0] || 0;
     const hiddenLayers = layers.slice(1, -1).length || 0;
     const outputLayer = layers[layers.length - 1] || 0;
@@ -164,7 +168,7 @@ const ModelCard = ({ model }: { model: Model }) => {
                             <PlayIcon className="h-5 w-5  cursor-pointer" />
                         </PopoverTrigger>
                         <PopoverContent>
-                            <TrainPopover model={model}/>
+                            <TrainPopover model={model} />
                         </PopoverContent>
                     </Popover>
                 )}
