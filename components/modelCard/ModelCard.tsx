@@ -4,12 +4,22 @@ import { Label } from "@/components/ui/Label";
 import { Model } from "@/lib/models/model";
 import { useAtomValue } from "jotai";
 import { datasetsAtom } from "@/lib/atoms/datasetAtoms";
-import { PlayIcon, StopIcon } from "@heroicons/react/24/outline";
+import {
+    InformationCircleIcon,
+    PlayIcon,
+    StopIcon,
+} from "@heroicons/react/24/outline";
 import { useTraining } from "@/lib/hooks/useTraining";
 import { TrainingStatus } from "@/lib/models/training";
 import { Spinner } from "../ui/Spinner";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
 import TrainPopover from "./TrainPopover";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "../ui/Tooltip";
 
 const ModelCard = ({ model }: { model: Model }) => {
     const datasets = useAtomValue(datasetsAtom);
@@ -38,7 +48,7 @@ const ModelCard = ({ model }: { model: Model }) => {
         stopped: { text: "Stopped", color: "bg-red-400" },
         starting: { text: "Starting", color: "bg-blue-400" },
         training: {
-            text: `Training (${training?.epochs} / ${training?.maxEpochs})`,
+            text: `Training`,
             color: "bg-lime-400",
         },
         stopping: { text: "Stopping", color: "bg-yellow-400" },
@@ -139,7 +149,40 @@ const ModelCard = ({ model }: { model: Model }) => {
                     {/* Texte de statut */}
                     <span className="text-sm mr-0.5">{trainingStatusText}</span>
                     {trainingStatus !== "stopped" && (
-                        <Spinner className="w-3.5 h-3.5" />
+                        <div className="flex flex-row text-sm mr-2 gap-2">
+                            <Spinner className="w-3.5 h-3.5" />
+                            <span>·</span>
+                        </div>
+                    )}
+                    {training?.status === "training" && (
+                        <>
+                            <div className="flex flex-row text-sm mr-1 items-center gap-2">
+                                {` ${training?.epochs} / ${training?.maxEpochs} epochs `}
+                            </div>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <InformationCircleIcon className="h-4 w-4 cursor-pointer" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>
+                                            {`Batch size: ${training?.batchSize}`}
+                                        </p>
+                                        <p>
+                                            {`Epochs: ${training?.epochs} / ${training?.maxEpochs}`}
+                                        </p>
+                                        <p>
+                                            {`Learning rate: ${training?.learningRate}`}
+                                        </p>
+                                        <p>
+                                            {model.problemType === "classification"
+                                                ? `Accuracy: ${training?.score?.toFixed(2) ?? "Not available"}`
+                                                : `Mean Absolute Error: ${training?.score?.toFixed(2) ?? "Not available"}`}
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </>
                     )}
                 </div>
 
@@ -154,16 +197,7 @@ const ModelCard = ({ model }: { model: Model }) => {
                     </div>
                 ) : (
                     <Popover>
-                        <PopoverTrigger
-                            className="flex items-center space-x-0.5 cursor-pointer underline"
-                            /* onClick={() => {
-                            train({
-                                batchSize: 1,
-                                maxEpochs: 100,
-                                learningRate: 0.001,
-                            });
-                        }} */
-                        >
+                        <PopoverTrigger className="flex items-center space-x-0.5 cursor-pointer underline">
                             <a className="text-sm">Train</a>
                             <PlayIcon className="h-5 w-5  cursor-pointer" />
                         </PopoverTrigger>
