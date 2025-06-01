@@ -125,11 +125,6 @@ const NewModelForm = ({ baseDatasetId }: { baseDatasetId: number | null }) => {
                 Number(col.value),
             );
 
-            console.log(
-                selectedDataset?.columns
-            )
-
-
             const totalUniqueValues =
                 selectedDataset?.columns?.reduce((acc, column, index) => {
                     if (selectedColumnIndexes.includes(index)) {
