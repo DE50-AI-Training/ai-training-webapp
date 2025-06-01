@@ -66,7 +66,10 @@ export const DatasetInputTable = ({ columns }: DatasetInputTableProps) => {
                                 <span className="text-gray-500">Null rows</span>
                             </TableCell>
                             {columns.map((col) => (
-                                <TableCell className="text-center py-4 px-1">
+                                <TableCell
+                                    key={col.name}
+                                    className="text-center py-4 px-1"
+                                >
                                     <span className="text-gray-500">
                                         {col.nullCount}
                                     </span>
