@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 
 import { MLPLayersTable } from "./MLPLayersTable";
@@ -15,6 +14,7 @@ import { Input } from "../ui/Input";
 import { Activation, ModelType } from "@/lib/models/architecture";
 import { useRouter } from "next/navigation";
 import { useCreateModel } from "@/lib/hooks/useCreateModel";
+import { Slider } from "../ui/Slider";
 
 const NewModelForm = ({
     fromDataset,
@@ -39,6 +39,7 @@ const NewModelForm = ({
     const [layers, setLayers] = useState<number[]>([0, 8, 8, 0]); // [input, hidden1, hidden2, output]
     const [activationFunction, setActivationFunction] =
         useState<Activation>("relu");
+    const [trainingFraction, setTrainingFraction] = useState(0.8);
 
     const datasets = useAtomValue(datasetsAtom);
 
@@ -66,6 +67,7 @@ const NewModelForm = ({
                               layers,
                           }
                         : undefined,
+                trainingFraction,
             };
             const model = await createModel(newModel);
             if (model) {
@@ -160,9 +162,12 @@ const NewModelForm = ({
     // Set initial states if fromModel is provided
     useEffect(() => {
         if (fromModel) {
-            setName(fromModel.name || "");
+            setName(fromModel.name + " (copy)" || "");
             setProblemType(fromModel.problemType || "classification");
             setdatasetId(fromModel.datasetId || null);
+            setTrainingFraction(
+                fromModel.trainingFraction || 0.8,
+            );
             setColumnsToClassify(
                 fromModel.outputColumns.map((col) => ({
                     value: col.toString(),
@@ -189,7 +194,7 @@ const NewModelForm = ({
         <div className="flex flex-col justify-center mx-auto py-10 max-w-3xl">
             <h1 className="text-2xl font-bold mb-8 text-center">New model</h1>
             <form onSubmit={onSubmit} className="space-y-10">
-                {/* 1. Training data section */}
+                {/* Training data section */}
                 <div className="space-y-3">
                     <FormSection
                         title="1. Select training data"
@@ -203,7 +208,7 @@ const NewModelForm = ({
                     />
                 </div>
 
-                {/* 2. Problem type section */}
+                {/* Problem type section */}
                 {datasetId && (
                     <div className="space-y-3">
                         <FormSection
@@ -245,7 +250,7 @@ const NewModelForm = ({
                     </div>
                 )}
 
-                {/* 3. Architecture selection section */}
+                {/* Architecture selection section */}
                 {!!(
                     datasetId &&
                     columnsToClassify.length &&
@@ -291,9 +296,31 @@ const NewModelForm = ({
                             />
                         </div>
 
-                        {/* 4. Choose name section */}
+                        {/* Choose testing fraction section */}
+                        <div className="mx-auto space-y-3 max-w-sm">
+                            <FormSection
+                                title="4. Training data fraction"
+                                tootipContent="Choose training fraction for the model"
+                            />
+                            <div className="flex items-center justify-center">
+                                <Slider
+                                    value={[trainingFraction]}
+                                    onValueChange={(value) =>
+                                        setTrainingFraction(value[0])
+                                    }
+                                    min={0.1}
+                                    max={0.9}
+                                    step={0.01}
+                                />
+                                <span className="ml-4">
+                                    {Math.round(trainingFraction * 100)}%
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Choose name section */}
                         <div className="mx-auto  space-y-3  max-w-sm">
-                            <FormSection title="4. Model name" />
+                            <FormSection title="5. Model name" />
                             <Input
                                 type="text"
                                 placeholder="Model name"

@@ -8,6 +8,7 @@ type ModelBase = {
     inputColumns: number[];
     outputColumns: number[];
     problemType: ProblemType;
+    trainingFraction: number;
 };
 
 export type Model = ModelBase & {
