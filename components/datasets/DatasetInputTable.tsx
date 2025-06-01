@@ -80,8 +80,11 @@ export const DatasetInputTable = ({ columns }: DatasetInputTableProps) => {
                             <TableCell className="text-center py-4 px-1">
                                 <span className="text-gray-500">Unique values</span>
                             </TableCell>
-                            {columns.map((col) => (
-                                <TableCell className="text-center py-4 px-1">
+                            {columns.map((col, index) => (
+                                <TableCell
+                                    key={`${col.name}-${index}`}
+                                    className="text-center py-4 px-1"
+                                >
                                     <span className="text-gray-500">
                                         {col.uniqueValues}
                                     </span>
