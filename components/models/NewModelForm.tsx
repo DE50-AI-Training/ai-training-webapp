@@ -10,13 +10,19 @@ import { useAtomValue } from "jotai";
 import { datasetsAtom } from "@/lib/atoms/datasetAtoms";
 import FormSelect from "./FormSelect";
 import MultipleSelector, { Option } from "../ui/MultipleSelector";
-import { ModelCreate, ProblemType } from "@/lib/models/model";
+import { Model, ModelCreate, ProblemType } from "@/lib/models/model";
 import { Input } from "../ui/Input";
 import { Activation, ModelType } from "@/lib/models/architecture";
 import { useRouter } from "next/navigation";
 import { useCreateModel } from "@/lib/hooks/useCreateModel";
 
-const NewModelForm = ({ baseDatasetId }: { baseDatasetId: number | null }) => {
+const NewModelForm = ({
+    fromDataset,
+    fromModel,
+}: {
+    fromDataset: number | null;
+    fromModel: Model | null;
+}) => {
     const router = useRouter();
     const { create: createModel } = useCreateModel();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,7 +30,7 @@ const NewModelForm = ({ baseDatasetId }: { baseDatasetId: number | null }) => {
     const [name, setName] = useState("");
     const [problemType, setProblemType] =
         useState<ProblemType>("classification");
-    const [datasetId, setdatasetId] = useState<number | null>(baseDatasetId);
+    const [datasetId, setdatasetId] = useState<number | null>(fromDataset);
     const [columnsToClassify, setColumnsToClassify] = useState<Option[]>([]);
     const [columnsAsParameters, setColumnsAsParameters] = useState<Option[]>(
         [],
@@ -151,6 +157,34 @@ const NewModelForm = ({ baseDatasetId }: { baseDatasetId: number | null }) => {
         selectedDataset?.uniqueValuesPerColumn,
     ]);
 
+    // Set initial states if fromModel is provided
+    useEffect(() => {
+        if (fromModel) {
+            setName(fromModel.name || "");
+            setProblemType(fromModel.problemType || "classification");
+            setdatasetId(fromModel.datasetId || null);
+            setColumnsToClassify(
+                fromModel.outputColumns.map((col) => ({
+                    value: col.toString(),
+                    label: selectedDataset?.columns[col] || `Column ${col}`,
+                })),
+            );
+            setColumnsAsParameters(
+                fromModel.inputColumns.map((col) => ({
+                    value: col.toString(),
+                    label: selectedDataset?.columns[col] || `Column ${col}`,
+                })),
+            );
+            if (fromModel.mlpArchitecture) {
+                setSelectedModel("MLP");
+                setLayers(fromModel.mlpArchitecture.layers || [0, 8, 8, 0]);
+                setActivationFunction(
+                    fromModel.mlpArchitecture.activation || "relu",
+                );
+            }
+        }
+    }, [fromModel, selectedDataset]);
+
     return (
         <div className="flex flex-col justify-center mx-auto py-10 max-w-3xl">
             <h1 className="text-2xl font-bold mb-8 text-center">New model</h1>
@@ -187,45 +221,16 @@ const NewModelForm = ({ baseDatasetId }: { baseDatasetId: number | null }) => {
                         {/* Commented select elements */}
                         <MultipleSelector
                             options={columnOptions}
-                            placeholder="Columns to be classified"
+                            placeholder="Target column(s)"
                             onChange={(value) => {
                                 setColumnsToClassify(value);
-                                /* setLayers((prev) => {
-                                    const newLayers = [...prev];
-                                    newLayers[newLayers.length - 1] =
-                                        value.length;
-                                    return newLayers;
-                                }); */
-
-                                // Set layers based on the number of different values to classify
-                                /* const selectedColumns = value.map((col) =>
-                                    Number(col.value),
-                                );
-                                const uniqueValues =
-                                    selectedDataset?.uniqueValuesPerColumn.filter(
-                                        (_, index) =>
-                                            selectedColumns.includes(index),
-                                    );
-                                if (uniqueValues) {
-                                    const totalUniqueValues =
-                                        uniqueValues.reduce(
-                                            (acc, val) => acc + val,
-                                            0,
-                                        );
-                                    setLayers((prev) => {
-                                        const newLayers = [...prev];
-                                        newLayers[newLayers.length - 1] =
-                                            totalUniqueValues;
-                                        return newLayers;
-                                    });
-                                } */
                             }}
                             value={columnsToClassify}
                             className="w-1000² mx-auto"
                         />
                         <MultipleSelector
                             options={columnOptions}
-                            placeholder="Columns used as parameters"
+                            placeholder="Input columns"
                             onChange={(value) => {
                                 setColumnsAsParameters(value);
                                 setLayers((prev) => {
