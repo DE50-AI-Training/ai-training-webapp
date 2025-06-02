@@ -93,7 +93,7 @@ const NewDatasetForm = () => {
                             type="submit"
                             disabled={isSubmitting}
                             variant="outline"
-                            className="px-8 py-2  font-semibold border border-gray-400  bg-gradient-to-r from-[#D97A7A77] to-[#A48DD377] rounded-md"
+                            className="px-8 py-2  font-semibold border border-gray-400  bg-gradient-to-r from-green-100 to-orange-100 rounded-md"
                         >
                             {isSubmitting ? "Creating..." : "Create"}
                         </Button>
