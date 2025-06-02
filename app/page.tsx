@@ -63,7 +63,7 @@ const Home = () => {
 
     return (
         <TooltipProvider>
-            <div className="flex w-full flex-col bg-white rounded-xl ring-gray-200 p-20 pt-6 pb-6">
+            <div className="flex w-full flex-col bg-white rounded-xl ring-1 ring-gray-200 p-20 pt-6 pb-6 max-w-6xl mx-auto">
                 {/* Titre centré */}
                 <div className="text-center">
                     <p className="text-center text-[35px] font-bold">
