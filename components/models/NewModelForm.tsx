@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 
 import { MLPLayersTable } from "./MLPLayersTable";
@@ -10,13 +9,20 @@ import { useAtomValue } from "jotai";
 import { datasetsAtom } from "@/lib/atoms/datasetAtoms";
 import FormSelect from "./FormSelect";
 import MultipleSelector, { Option } from "../ui/MultipleSelector";
-import { ModelCreate, ProblemType } from "@/lib/models/model";
+import { Model, ModelCreate, ProblemType } from "@/lib/models/model";
 import { Input } from "../ui/Input";
 import { Activation, ModelType } from "@/lib/models/architecture";
 import { useRouter } from "next/navigation";
 import { useCreateModel } from "@/lib/hooks/useCreateModel";
+import { Slider } from "../ui/Slider";
 
-const NewModelForm = ({ baseDatasetId }: { baseDatasetId: number | null }) => {
+const NewModelForm = ({
+    fromDataset,
+    fromModel,
+}: {
+    fromDataset: number | null;
+    fromModel: Model | null;
+}) => {
     const router = useRouter();
     const { create: createModel } = useCreateModel();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,7 +30,7 @@ const NewModelForm = ({ baseDatasetId }: { baseDatasetId: number | null }) => {
     const [name, setName] = useState("");
     const [problemType, setProblemType] =
         useState<ProblemType>("classification");
-    const [datasetId, setdatasetId] = useState<number | null>(baseDatasetId);
+    const [datasetId, setdatasetId] = useState<number | null>(fromDataset);
     const [columnsToClassify, setColumnsToClassify] = useState<Option[]>([]);
     const [columnsAsParameters, setColumnsAsParameters] = useState<Option[]>(
         [],
@@ -33,6 +39,7 @@ const NewModelForm = ({ baseDatasetId }: { baseDatasetId: number | null }) => {
     const [layers, setLayers] = useState<number[]>([0, 8, 8, 0]); // [input, hidden1, hidden2, output]
     const [activationFunction, setActivationFunction] =
         useState<Activation>("relu");
+    const [trainingFraction, setTrainingFraction] = useState(0.8);
 
     const datasets = useAtomValue(datasetsAtom);
 
@@ -60,6 +67,7 @@ const NewModelForm = ({ baseDatasetId }: { baseDatasetId: number | null }) => {
                               layers,
                           }
                         : undefined,
+                trainingFraction,
             };
             const model = await createModel(newModel);
             if (model) {
@@ -147,11 +155,42 @@ const NewModelForm = ({ baseDatasetId }: { baseDatasetId: number | null }) => {
         }
     }, [columnsToClassify, problemType, selectedDataset?.columns]);
 
+    // Set initial states if fromModel is provided
+    useEffect(() => {
+        if (fromModel) {
+            setName(fromModel.name + " (copy)" || "");
+            setProblemType(fromModel.problemType || "classification");
+            setdatasetId(fromModel.datasetId || null);
+            setTrainingFraction(
+                fromModel.trainingFraction || 0.8,
+            );
+            setColumnsToClassify(
+                fromModel.outputColumns.map((col) => ({
+                    value: col.toString(),
+                    label: selectedDataset?.columns[col] || `Column ${col}`,
+                })),
+            );
+            setColumnsAsParameters(
+                fromModel.inputColumns.map((col) => ({
+                    value: col.toString(),
+                    label: selectedDataset?.columns[col] || `Column ${col}`,
+                })),
+            );
+            if (fromModel.mlpArchitecture) {
+                setSelectedModel("MLP");
+                setLayers(fromModel.mlpArchitecture.layers || [0, 8, 8, 0]);
+                setActivationFunction(
+                    fromModel.mlpArchitecture.activation || "relu",
+                );
+            }
+        }
+    }, [fromModel, selectedDataset]);
+
     return (
         <div className="flex flex-col justify-center mx-auto py-10 max-w-3xl">
             <h1 className="text-2xl font-bold mb-8 text-center">New model</h1>
             <form onSubmit={onSubmit} className="space-y-10">
-                {/* 1. Training data section */}
+                {/* Training data section */}
                 <div className="space-y-3">
                     <FormSection
                         title="1. Select training data"
@@ -165,7 +204,7 @@ const NewModelForm = ({ baseDatasetId }: { baseDatasetId: number | null }) => {
                     />
                 </div>
 
-                {/* 2. Problem type section */}
+                {/* Problem type section */}
                 {datasetId && (
                     <div className="space-y-3">
                         <FormSection
@@ -183,45 +222,16 @@ const NewModelForm = ({ baseDatasetId }: { baseDatasetId: number | null }) => {
                         {/* Commented select elements */}
                         <MultipleSelector
                             options={columnOptions}
-                            placeholder="Columns to be classified"
+                            placeholder="Target column(s)"
                             onChange={(value) => {
                                 setColumnsToClassify(value);
-                                /* setLayers((prev) => {
-                                    const newLayers = [...prev];
-                                    newLayers[newLayers.length - 1] =
-                                        value.length;
-                                    return newLayers;
-                                }); */
-
-                                // Set layers based on the number of different values to classify
-                                /* const selectedColumns = value.map((col) =>
-                                    Number(col.value),
-                                );
-                                const uniqueValues =
-                                    selectedDataset?.uniqueValuesPerColumn.filter(
-                                        (_, index) =>
-                                            selectedColumns.includes(index),
-                                    );
-                                if (uniqueValues) {
-                                    const totalUniqueValues =
-                                        uniqueValues.reduce(
-                                            (acc, val) => acc + val,
-                                            0,
-                                        );
-                                    setLayers((prev) => {
-                                        const newLayers = [...prev];
-                                        newLayers[newLayers.length - 1] =
-                                            totalUniqueValues;
-                                        return newLayers;
-                                    });
-                                } */
                             }}
                             value={columnsToClassify}
                             className="w-1000² mx-auto"
                         />
                         <MultipleSelector
                             options={columnOptions}
-                            placeholder="Columns used as parameters"
+                            placeholder="Input columns"
                             onChange={(value) => {
                                 setColumnsAsParameters(value);
                                 setLayers((prev) => {
@@ -236,7 +246,7 @@ const NewModelForm = ({ baseDatasetId }: { baseDatasetId: number | null }) => {
                     </div>
                 )}
 
-                {/* 3. Architecture selection section */}
+                {/* Architecture selection section */}
                 {!!(
                     datasetId &&
                     columnsToClassify.length &&
@@ -282,9 +292,31 @@ const NewModelForm = ({ baseDatasetId }: { baseDatasetId: number | null }) => {
                             />
                         </div>
 
-                        {/* 4. Choose name section */}
+                        {/* Choose testing fraction section */}
+                        <div className="mx-auto space-y-3 max-w-sm">
+                            <FormSection
+                                title="4. Training data fraction"
+                                tootipContent="Choose training fraction for the model"
+                            />
+                            <div className="flex items-center justify-center">
+                                <Slider
+                                    value={[trainingFraction]}
+                                    onValueChange={(value) =>
+                                        setTrainingFraction(value[0])
+                                    }
+                                    min={0.1}
+                                    max={0.9}
+                                    step={0.01}
+                                />
+                                <span className="ml-4">
+                                    {Math.round(trainingFraction * 100)}%
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Choose name section */}
                         <div className="mx-auto  space-y-3  max-w-sm">
-                            <FormSection title="4. Model name" />
+                            <FormSection title="5. Model name" />
                             <Input
                                 type="text"
                                 placeholder="Model name"

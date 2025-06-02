@@ -8,7 +8,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/Table";
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 interface MLPLayersTableProps {
     layers: number[];
@@ -38,17 +38,17 @@ export const MLPLayersTable = ({ layers, setLayers }: MLPLayersTableProps) => {
 
     return (
         <div className="mt-6">
-            <div className="overflow-x-auto">
-                <Table className="border-collapse border-t border-l border-r border-gray-200 rounded-lg">
+            <div className="overflow-x-auto border border-gray-200 rounded-lg">
+                <Table className="border-collapse  overflow-hidden" >
                     <TableHeader>
-                        <TableRow>
-                            <TableHead className="text-center py-3 font-medium border-b">
+                        <TableRow className="hover:bg-transparent">
+                            <TableHead className="text-center py-3 font-medium border-b border-r">
                                 Input layer
                             </TableHead>
                             {hiddenLayers.map((_, index) => (
                                 <TableHead
                                     key={index}
-                                    className="text-center py-3 font-medium border-b relative"
+                                    className="text-center py-3 font-medium border-b border-r relative"
                                 >
                                     <div className="flex items-center justify-center">
                                         <span>Layer {index + 1}</span>
@@ -58,7 +58,7 @@ export const MLPLayersTable = ({ layers, setLayers }: MLPLayersTableProps) => {
                                             className="ml-2 text-gray-400 hover:text-red-500 transition-colors"
                                             disabled={hiddenLayers.length <= 1}
                                         >
-                                            <XMarkIcon className="w-4 h-4" />
+                                            <TrashIcon className="w-4 h-4" />
                                         </button>
                                     </div>
                                 </TableHead>
@@ -69,7 +69,7 @@ export const MLPLayersTable = ({ layers, setLayers }: MLPLayersTableProps) => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow>
+                        <TableRow className="hover:bg-transparent">
                             <TableCell className="text-center py-4 px-0 border-r border-gray-200">
                                 <span className="text-gray-500">{inputLayer}</span>
                             </TableCell>
@@ -88,7 +88,7 @@ export const MLPLayersTable = ({ layers, setLayers }: MLPLayersTableProps) => {
                                                 parseInt(e.target.value) || 0
                                             )
                                         }
-                                        className="w-16 text-center mx-auto border-0 shadow-none bg-transparent focus:ring-0 focus:border-transparent"
+                                        className="w-16 text-center mx-auto shadow-none focus:ring-0 focus:border-transparent"
                                     />
                                 </TableCell>
                             ))}

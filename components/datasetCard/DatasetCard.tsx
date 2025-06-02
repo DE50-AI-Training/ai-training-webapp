@@ -106,7 +106,7 @@ const DatasetCard = ({ dataset }: { dataset: Dataset }) => {
                 <div className="flex items-center space-x-2">
                     <a
                         className="underline text-[13px]"
-                        href={`/models/new?dataset=${dataset.id}`}
+                        href={`/models/new?fromDataset=${dataset.id}`}
                     >
                         Create model from data
                     </a>
