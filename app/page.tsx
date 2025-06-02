@@ -76,13 +76,13 @@ const Home = () => {
                 </div>
 
                 {/* Bloc d'infos fusionné */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 bg-gradient-to-r from-indigo-200 to-purple-200 p-4 rounded-lg text-center">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 bg-gradient-to-b from-indigo-200 to-purple-200 p-4 rounded-lg text-center">
                     {/* Trained Models */}
                     <div
                         onClick={() => router.push("/models")}
                         className="cursor-pointer hover:bg-purple-100 transition rounded-md py-2"
                     >
-                        <p className="text-lg font-semibold">{models.length}</p>
+                        <p className="text-xl font-semibold">{models.length}</p>
                         <span className="text-sm text-gray-700">
                             Trained Models
                         </span>
@@ -93,7 +93,7 @@ const Home = () => {
                         onClick={() => router.push("/datasets")}
                         className="cursor-pointer hover:bg-purple-100 transition rounded-md py-2"
                     >
-                        <p className="text-lg font-semibold">
+                        <p className="text-xl font-semibold">
                             {datasets.length}
                         </p>
                         <span className="text-sm text-gray-700">
@@ -110,7 +110,7 @@ const Home = () => {
                         }}
                         className="cursor-pointer hover:bg-purple-100 transition rounded-md py-2"
                     >
-                        <p className="text-lg font-semibold truncate max-w-[140px] mx-auto">
+                        <p className="text-xl font-semibold truncate max-w-[140px] mx-auto">
                             {lastCreatedModel
                                 ? lastCreatedModel.name
                                 : "No model yet"}
@@ -121,8 +121,15 @@ const Home = () => {
                     </div>
 
                     {/* Guide (statique pour l'instant) */}
-                    <div className="py-2">
-                        <p className="text-lg font-semibold">Guide</p>
+                    <div
+                        onClick={() => {
+                            if (lastCreatedModel) {
+                                router.push(`/models/guide`);
+                            }
+                        }}
+                        className="cursor-pointer hover:bg-purple-100 transition rounded-md py-2"
+                    >
+                        <p className="text-xl font-semibold">Guide</p>
                         <p className="text-sm text-gray-700">
                             Check out our guide
                         </p>
