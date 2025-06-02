@@ -15,6 +15,9 @@ import { Activation, ModelType } from "@/lib/models/architecture";
 import { useRouter } from "next/navigation";
 import { useCreateModel } from "@/lib/hooks/useCreateModel";
 import { Slider } from "../ui/Slider";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/Tooltip";
+
 
 const NewModelForm = ({
     fromDataset,
@@ -230,29 +233,62 @@ const NewModelForm = ({
                             placeholder="Problem type"
                         />
                         {/* Commented select elements */}
-                        <MultipleSelector
-                            options={columnOptions}
-                            placeholder="Target column(s)"
-                            onChange={(value) => {
-                                setColumnsToClassify(value);
-                            }}
-                            value={columnsToClassify}
-                            className="w-1000² mx-auto"
-                        />
-                        <MultipleSelector
-                            options={columnOptions}
-                            placeholder="Input columns"
-                            onChange={(value) => {
-                                setColumnsAsParameters(value);
-                                setLayers((prev) => {
-                                    const newLayers = [...prev];
-                                    newLayers[0] = value.length;
-                                    return newLayers;
-                                });
-                            }}
-                            value={columnsAsParameters}
-                            className="w-sm mx-auto"
-                        />
+                        <div className="relative flex gap-2 items-center max-w-sm mx-auto">
+                            <MultipleSelector
+                                options={columnOptions}
+                                placeholder="Target column(s)"
+                                onChange={(value) => {
+                                    setColumnsToClassify(value);
+                                }}
+                                value={columnsToClassify}
+                            />
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <InformationCircleIcon className="h-5 w-5 cursor-pointer" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Select the column(s) that the model should learn to predict.</p>
+                                            <p> This is usually your output or label.</p>
+                                        <span className="block mt-2 font-bold text-violet-300">Need help?</span> Check our{" "}
+                                        <a href="/guide" className="underline text-violet-300 hover:text-violet-500">
+                                            guide page
+                                        </a>
+                                        .
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
+                        <div className="relative flex gap-2 items-center max-w-sm mx-auto">
+                            <MultipleSelector
+                                options={columnOptions}
+                                placeholder="Input columns"
+                                onChange={(value) => {
+                                    setColumnsAsParameters(value);
+                                    setLayers((prev) => {
+                                        const newLayers = [...prev];
+                                        newLayers[0] = value.length;
+                                        return newLayers;
+                                    });
+                                }}
+                                value={columnsAsParameters}
+                            />
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <InformationCircleIcon className="h-5 w-5 cursor-pointer" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Select the columns that the model will use as input features to make predictions.</p>
+                                        <span className="block mt-2 font-bold text-violet-300">Need help?</span> Check our{" "}
+                                        <a href="/guide" className="underline text-violet-300 hover:text-violet-500">
+                                            guide page
+                                        </a>
+                                        .
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
                     </div>
                 )}
 
@@ -302,39 +338,41 @@ const NewModelForm = ({
                                 />
                             </div>
 
-                        {/* Choose testing fraction section */}
-                        <div className="mx-auto space-y-3 max-w-sm">
-                            <FormSection
-                                title="4. Training data fraction"
-                                tooltipContent="Choose training fraction for the model"
-                            />
-                            <div className="flex items-center justify-center">
-                                <Slider
-                                    value={[trainingFraction]}
-                                    onValueChange={(value) =>
-                                        setTrainingFraction(value[0])
-                                    }
-                                    min={0.1}
-                                    max={0.9}
-                                    step={0.01}
+                            {/* Choose testing fraction section */}
+                            <div className="mx-auto space-y-3 max-w-sm">
+                                <FormSection
+                                    title="4. Training data fraction"
+                                    tooltipContent={<div><p>Set the fraction of the dataset to be used for training the model.</p>
+                                        <p>The rest will be used for testing its performance.</p>
+                                    </div>}
                                 />
-                                <span className="ml-4">
-                                    {Math.round(trainingFraction * 100)}%
-                                </span>
+                                <div className="flex items-center justify-center">
+                                    <Slider
+                                        value={[trainingFraction]}
+                                        onValueChange={(value) =>
+                                            setTrainingFraction(value[0])
+                                        }
+                                        min={0.1}
+                                        max={0.9}
+                                        step={0.01}
+                                    />
+                                    <span className="ml-4">
+                                        {Math.round(trainingFraction * 100)}%
+                                    </span>
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Choose name section */}
-                        <div className="mx-auto  space-y-3  max-w-sm">
-                            <FormSection title="5. Model name" />
-                            <Input
-                                type="text"
-                                placeholder="Model name"
-                                className=""
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                        </div>
+                            {/* Choose name section */}
+                            <div className="mx-auto  space-y-3  max-w-sm">
+                                <FormSection title="5. Model name" />
+                                <Input
+                                    type="text"
+                                    placeholder="Model name"
+                                    className=""
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                />
+                            </div>
 
                             {/* Submit button */}
                             <div className="flex justify-center space-y-3">

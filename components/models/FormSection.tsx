@@ -17,7 +17,7 @@ export const FormSection = ({
 }) => {
     return (
         <div className="flex justify-center items-center mb-2">
-            <h3 className="font-medium pr-2">{title}</h3>
+            <p className="font-medium text-lg pr-2">{title}</p>
             {tooltipContent && (
                 <TooltipProvider>
                     <Tooltip>
