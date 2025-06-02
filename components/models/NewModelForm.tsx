@@ -63,9 +63,9 @@ const NewModelForm = ({
                 mlpArchitecture:
                     selectedModel === "MLP"
                         ? {
-                              activation: activationFunction,
-                              layers,
-                          }
+                            activation: activationFunction,
+                            layers,
+                        }
                         : undefined,
                 trainingFraction,
             };
@@ -112,19 +112,19 @@ const NewModelForm = ({
 
     const columnOptions: Option[] = selectedDataset
         ? selectedDataset.columns
-              .map((column, index) => ({
-                  value: index.toString(),
-                  label: column,
-              }))
-              .filter((option) => {
-                  const isInClassify = columnsToClassify.some(
-                      (col) => col.value === option.value,
-                  );
-                  const isInParameters = columnsAsParameters.some(
-                      (col) => col.value === option.value,
-                  );
-                  return !isInClassify && !isInParameters;
-              })
+            .map((column, index) => ({
+                value: index.toString(),
+                label: column,
+            }))
+            .filter((option) => {
+                const isInClassify = columnsToClassify.some(
+                    (col) => col.value === option.value,
+                );
+                const isInParameters = columnsAsParameters.some(
+                    (col) => col.value === option.value,
+                );
+                return !isInClassify && !isInParameters;
+            })
         : [];
 
     useEffect(() => {
@@ -198,7 +198,7 @@ const NewModelForm = ({
                 <div className="space-y-3">
                     <FormSection
                         title="1. Select training data"
-                        tootipContent="Choose the dataset to use for training"
+                        tooltipContent={<p>Choose the dataset from your uploaded files that will be used to train the model.</p>}
                     />
                     <FormSelect
                         value={datasetId?.toString() || ""}
@@ -213,7 +213,13 @@ const NewModelForm = ({
                     <div className="space-y-3">
                         <FormSection
                             title="2. Select problem type"
-                            tootipContent="Choose the type of problem to solve"
+                            tooltipContent={<div>
+                                <p>Specify whether your task is:</p>
+                                <ul className="list-disc list-inside mt-1">
+                                    <li>Classification: predict categories</li>
+                                    <li>Regression: predict continuous values</li>
+                                </ul>
+                            </div>}
                         />
                         <FormSelect
                             value={problemType}
@@ -256,51 +262,51 @@ const NewModelForm = ({
                     columnsToClassify.length &&
                     columnsAsParameters.length
                 ) && (
-                    <>
-                        <div className="space-y-3 ">
-                            <FormSection
-                                title="3. Choose architecture"
-                                tootipContent="Choose the type of model to train"
-                            />
-                            <FormSelect
-                                value={selectedModel}
-                                onChange={(value) =>
-                                    setSelectedModel(value as ModelType)
-                                }
-                                options={modelOptions}
-                                placeholder="Select model"
-                            />
-                        </div>
+                        <>
+                            <div className="space-y-3 ">
+                                <FormSection
+                                    title="3. Choose architecture"
+                                    tooltipContent={<p>Select the model architecture best suited for your problem.</p>}
+                                />
+                                <FormSelect
+                                    value={selectedModel}
+                                    onChange={(value) =>
+                                        setSelectedModel(value as ModelType)
+                                    }
+                                    options={modelOptions}
+                                    placeholder="Select model"
+                                />
+                            </div>
 
-                        {/* MLP Layers table, only shown for perceptron model */}
-                        {selectedModel === "MLP" && (
-                            <MLPLayersTable
-                                layers={layers}
-                                setLayers={setLayers}
-                            />
-                        )}
+                            {/* MLP Layers table, only shown for perceptron model */}
+                            {selectedModel === "MLP" && (
+                                <MLPLayersTable
+                                    layers={layers}
+                                    setLayers={setLayers}
+                                />
+                            )}
 
-                        {/* Activation function selection */}
-                        <div className="space-y-3 ">
-                            <FormSection
-                                title="Activation function"
-                                tootipContent="Choose the activation function for the model"
-                            />
-                            <FormSelect
-                                value={activationFunction}
-                                onChange={(value) =>
-                                    setActivationFunction(value as Activation)
-                                }
-                                options={activationOptions}
-                                placeholder="Activation function"
-                            />
-                        </div>
+                            {/* Activation function selection */}
+                            <div className="space-y-3 ">
+                                <FormSection
+                                    title="Activation function"
+                                    tooltipContent={<p>Choose the activation function which affects how neurons process inputs.</p>}
+                                />
+                                <FormSelect
+                                    value={activationFunction}
+                                    onChange={(value) =>
+                                        setActivationFunction(value as Activation)
+                                    }
+                                    options={activationOptions}
+                                    placeholder="Activation function"
+                                />
+                            </div>
 
                         {/* Choose testing fraction section */}
                         <div className="mx-auto space-y-3 max-w-sm">
                             <FormSection
                                 title="4. Training data fraction"
-                                tootipContent="Choose training fraction for the model"
+                                tooltipContent="Choose training fraction for the model"
                             />
                             <div className="flex items-center justify-center">
                                 <Slider
@@ -330,19 +336,19 @@ const NewModelForm = ({
                             />
                         </div>
 
-                        {/* Submit button */}
-                        <div className="flex justify-center space-y-3">
-                            <Button
-                                type="submit"
-                                disabled={isSubmitting}
-                                variant="outline"
-                                className="px-8 py-2  font-semibold border border-gray-400  bg-gradient-to-r from-[#D97A7A77] to-[#A48DD377] rounded-md"
-                            >
-                                {isSubmitting ? "Creating..." : "Create"}
-                            </Button>
-                        </div>
-                    </>
-                )}
+                            {/* Submit button */}
+                            <div className="flex justify-center space-y-3">
+                                <Button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    variant="outline"
+                                    className="px-8 py-2  font-semibold border border-gray-400  bg-gradient-to-r from-[#D97A7A77] to-[#A48DD377] rounded-md"
+                                >
+                                    {isSubmitting ? "Creating..." : "Create"}
+                                </Button>
+                            </div>
+                        </>
+                    )}
             </form>
         </div>
     );
