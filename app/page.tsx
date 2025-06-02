@@ -63,20 +63,26 @@ const Home = () => {
 
     return (
         <TooltipProvider>
-            <div className="flex w-full flex-col bg-white rounded-xl ring-1 ring-gray-200 p-20 pt-6 pb-6">
+            <div className="flex w-full flex-col bg-white rounded-xl ring-gray-200 p-20 pt-6 pb-6">
                 {/* Titre centré */}
                 <div className="text-center">
                     <p className="text-center text-[35px] font-bold">
                         Welcome to SimplifyAI !
                     </p>
-                    <p className="text-md text-gray-500 mb-6 my-4">
-                        Train, visualize and operate your AI models in just a
-                        few clicks.
+                    <p className="text-xl font-medium text-gray-700 mb-4">
+                        Train, visualize and operate your AI models in just a few clicks.
                     </p>
+                    <p className="text-sm text-gray-500 max-w-2xl mx-auto mb-2">
+                        SimplifyAI helps you build and use AI models without writing a single line of code.
+                    </p>
+                    <p className="text-sm text-gray-500 max-w-2xl mx-auto mb-6">
+                        Whether you're analyzing customer data or experimenting with machine learning, SimplifyAI gives you the tools to import data, train models, and generate predictions — all in a few clicks.
+                    </p>
+
                 </div>
 
                 {/* Bloc d'infos fusionné */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 bg-gradient-to-b from-indigo-200 to-purple-200 p-4 rounded-lg text-center">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 border border-gray-300 ring-1 bg-gradient-to-b from-indigo-200 to-purple-200 p-4 rounded-lg text-center">
                     {/* Trained Models */}
                     <div
                         onClick={() => router.push("/models")}
@@ -124,7 +130,7 @@ const Home = () => {
                     <div
                         onClick={() => {
                             if (lastCreatedModel) {
-                                router.push(`/models/guide`);
+                                router.push(`/guide`);
                             }
                         }}
                         className="cursor-pointer hover:bg-purple-100 transition rounded-md py-2"
@@ -174,8 +180,8 @@ const Home = () => {
                             const dataset =
                                 item.type === "model"
                                     ? datasets.find(
-                                          (d) => d.id === item.datasetId,
-                                      )
+                                        (d) => d.id === item.datasetId,
+                                    )
                                     : null;
 
                             const text =
@@ -186,7 +192,7 @@ const Home = () => {
                             return (
                                 <div
                                     key={i}
-                                    className="flex items-center justify-between bg-indigo-50 rounded-lg px-4 py-2 text-sm"
+                                    className="flex items-center justify-between  bg-indigo-50 rounded-lg px-4 py-2 text-sm"
                                 >
                                     <span className="flex items-center gap-2">
                                         <Icon className="w-5 h-5 text-indigo-600" />
