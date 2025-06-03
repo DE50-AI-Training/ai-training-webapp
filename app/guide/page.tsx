@@ -23,9 +23,9 @@ const videoData = [
     },
 ];
 
-export default function GuidePage() {
+const GuidePage = () => {
     return (
-        <div className="flex w-full flex-col bg-white rounded-xl ring-1 ring-gray-200 p-20 pt-6 pb-6 max-w-6xl mx-auto">
+        <div className="flex w-full flex-col bg-white rounded-xl ring-1 ring-gray-200 p-20 pt-6 pb-6">
             {/* Header */}
             <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold">Need some help ?</h1>
@@ -38,13 +38,14 @@ export default function GuidePage() {
             {/* Videos grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 {videoData.map((video, idx) => (
-                    <div
-                        key={idx}
-                        className="flex flex-col items-center text-center space-y-2"
-                    >
-                        <h2 className="text-lg font-semibold">{video.title}</h2>
-                        <p className="text-sm text-gray-600">{video.desc}</p>
-                        <div className="w-full aspect-video rounded-md overflow-hidden ring-1 ring-gray-300 shadow-sm">
+                    <div key={idx} className="flex flex-col h-full text-center mb-4">
+                        {/* Header */}
+                        <div>
+                            <h2 className="text-lg font-semibold">{video.title}</h2>
+                            <p className="text-sm text-gray-600">{video.desc}</p>
+                        </div>
+                        {/* Video container aligned at bottom */}
+                        <div className="mt-auto w-full aspect-video rounded-md overflow-hidden ring-1 ring-gray-300 shadow-sm">
                             <iframe
                                 className="w-full h-full"
                                 src={video.url}
@@ -59,3 +60,5 @@ export default function GuidePage() {
         </div>
     );
 }
+
+export default GuidePage;
