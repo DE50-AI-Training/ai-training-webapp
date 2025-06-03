@@ -61,7 +61,6 @@ const Home = () => {
     );
 
     return (
-        <TooltipProvider>
             <div className="flex w-full flex-col bg-white rounded-xl ring-1 ring-gray-200 p-20 pt-6 pb-6">
                 {/* Titre centré */}
                 <div className="text-center">
@@ -221,7 +220,6 @@ const Home = () => {
                     </div>
                 </div>
             </div>
-        </TooltipProvider>
     );
 };
 
