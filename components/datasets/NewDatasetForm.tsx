@@ -9,6 +9,7 @@ import { createDataset, uploadDataset } from "@/lib/services/dataset";
 import { Dataset } from "@/lib/models/dataset";
 import { FormSection } from "../models/FormSection";
 import { useCreateDataset } from "@/lib/hooks/useCreateDataset";
+import { DatasetInputTable } from "./DatasetInputTable";
 
 const NewDatasetForm = () => {
     const router = useRouter();
@@ -71,11 +72,11 @@ const NewDatasetForm = () => {
                 </div>
             </div>
             {uploadedDataset && (
-                <form onSubmit={onSubmit} className="mt-6 space-y-3">
+                <form onSubmit={onSubmit} className="mt-6 space-y-10">
                     <div className="mx-auto space-y-3 max-w-sm">
                         <FormSection title="2. Data transformation" />
-                        Coming soon...
                     </div>
+                    <DatasetInputTable columns={uploadedDataset.columns} />
                     <div className="mx-auto space-y-3 max-w-sm">
                         <FormSection title="3. Dataset name" />
                         <Input
@@ -93,7 +94,7 @@ const NewDatasetForm = () => {
                             type="submit"
                             disabled={isSubmitting}
                             variant="outline"
-                            className="px-8 py-2  font-semibold border border-gray-400  bg-gradient-to-r from-[#D97A7A77] to-[#A48DD377] rounded-md"
+                            className="px-8 py-2  font-semibold border border-gray-400  bg-gradient-to-r from-green-100 to-orange-100 rounded-md"
                         >
                             {isSubmitting ? "Creating..." : "Create"}
                         </Button>

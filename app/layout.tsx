@@ -6,6 +6,7 @@ import { Provider } from "jotai";
 import HydrateAtoms from "./HydrateAtoms";
 import { getModels } from "@/lib/services/models";
 import { getDatasets } from "@/lib/services/dataset";
+import { TooltipProvider } from "@/components/ui/Tooltip";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -33,18 +34,20 @@ export default async function RootLayout({
 
     return (
         <Provider>
-            <HydrateAtoms initialModels={models} initialDatasets={datasets}>
-                <html lang="en">
-                    <body
-                        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-                    >
-                        <main className="mx-auto w-full lg:max-w-[80%] xl:max-w-[90%] 2xl:max-w-[80%] 3xl:max-w-[1536px] flex flex-col gap-20">
-                            <Navbar />
-                            {children}
-                        </main>
-                    </body>
-                </html>
-            </HydrateAtoms>
+            <TooltipProvider>
+                <HydrateAtoms initialModels={models} initialDatasets={datasets}>
+                    <html lang="en">
+                        <body
+                            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+                        >
+                            <main className="mx-auto w-full lg:max-w-[80%] xl:max-w-[90%] 2xl:max-w-[80%] 3xl:max-w-[1536px] flex flex-col gap-20">
+                                <Navbar />
+                                {children}
+                            </main>
+                        </body>
+                    </html>
+                </HydrateAtoms>
+            </TooltipProvider>
         </Provider>
     );
 }

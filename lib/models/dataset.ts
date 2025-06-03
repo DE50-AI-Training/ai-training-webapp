@@ -1,14 +1,22 @@
 export type DatasetType = "csv";
 
+export type DatasetColumnTypeEnum = "numeric" | "categorical" | "image";
+
+export type DatasetColumn = {
+    name: string;
+    type: DatasetColumnTypeEnum;
+    uniqueValues: number;
+    nullCount: number;
+};
+
 type DatasetBase = {
     name: string;
 };
 
 export type Dataset = DatasetBase & {
     id: number;
-    columns: string[];
+    columns: DatasetColumn[];
     rowCount: number;
-    uniqueValuesPerColumn: number[];
     createdAt: string;
     datasetType: DatasetType;
     originalFileName: string;
