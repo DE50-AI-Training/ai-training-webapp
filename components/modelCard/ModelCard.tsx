@@ -5,6 +5,7 @@ import { Model } from "@/lib/models/model";
 import { useAtomValue } from "jotai";
 import { datasetsAtom } from "@/lib/atoms/datasetAtoms";
 import {
+    EllipsisVerticalIcon,
     InformationCircleIcon,
     PlayIcon,
     StopIcon,
@@ -20,8 +21,21 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "../ui/Tooltip";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuTrigger,
+} from "@/components/ui/DropdownMenu";
+import { useRouter } from "next/navigation";
+import { downloadArchitecture, downloadWeights } from "@/lib/services/models";
+import { useDeleteModel } from "@/lib/hooks/useDeleteModel";
 
 const ModelCard = ({ model }: { model: Model }) => {
+    const router = useRouter();
+    const { delete: deleteModel } = useDeleteModel();
+
     const datasets = useAtomValue(datasetsAtom);
     const dataset = datasets.find((dataset) => dataset.id === model.datasetId);
     const layers = model.mlpArchitecture?.layers || [];
@@ -69,15 +83,60 @@ const ModelCard = ({ model }: { model: Model }) => {
 
     return (
         // Conteneur principal de la carte md:w-full ->
-        <div className="w-full mx-auto my-5 font-sans rounded-lg shadow-lg border border-gray-300 bg-gradient-to-br from-violet-200 to-rose-100">
+        <div className="w-full mx-auto my-5 font-sans rounded-lg shadow-md border border-gray-300 bg-gradient-to-br from-violet-200 to-rose-100">
             {/* En-tête */}
             <div className="mb-1 pb-2 pl-4 p-3 ">
-                <a
-                    className="text-xl font-bold text-gray-800 underline"
-                    href={`/models/${model.id}`}
-                >
-                    {model.name}
-                </a>
+                <div className="flex items-center justify-between">
+                    <a
+                        className="text-xl font-bold text-gray-800 underline"
+                        href={`/models/${model.id}`}
+                    >
+                        {model.name}
+                    </a>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <EllipsisVerticalIcon className="h-6 w-6 text-gray-800 cursor-pointer" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-48">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem
+                                onClick={() => {
+                                    router.push(
+                                        `/models/new?fromModel=${model.id}`,
+                                    );
+                                }}
+                            >
+                                Duplicate
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => {
+                                    if (
+                                        confirm(
+                                            "Are you sure you want to delete this model?\nTHIS IS IRREVERSIBLE!",
+                                        )
+                                    ) {
+                                        deleteModel(model.id);
+                                    }
+                                }}
+                            >
+                                Delete
+                            </DropdownMenuItem>
+
+                            <DropdownMenuLabel>Export</DropdownMenuLabel>
+                            <DropdownMenuItem
+                                onClick={() => downloadWeights(model.id)}
+                                disabled={!model.epochsTrained}
+                            >
+                                Export weights
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => downloadArchitecture(model.id)}
+                            >
+                                Export architecture
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
                 <p className="text-[12px] text-gray-600">{formattedDate}</p>
             </div>
 
@@ -175,7 +234,8 @@ const ModelCard = ({ model }: { model: Model }) => {
                                             {`Learning rate: ${training?.learningRate}`}
                                         </p>
                                         <p>
-                                            {model.problemType === "classification"
+                                            {model.problemType ===
+                                            "classification"
                                                 ? `Accuracy: ${training?.score?.toFixed(2) ?? "Not available"}`
                                                 : `Mean Absolute Error: ${training?.score?.toFixed(2) ?? "Not available"}`}
                                         </p>
