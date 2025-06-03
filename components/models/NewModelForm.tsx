@@ -172,13 +172,15 @@ const NewModelForm = ({
             setColumnsToClassify(
                 fromModel.outputColumns.map((col) => ({
                     value: col.toString(),
-                    label: selectedDataset?.columns[col].name || `Column ${col}`,
+                    label:
+                        selectedDataset?.columns[col].name || `Column ${col}`,
                 })),
             );
             setColumnsAsParameters(
                 fromModel.inputColumns.map((col) => ({
                     value: col.toString(),
-                    label: selectedDataset?.columns[col].name || `Column ${col}`,
+                    label:
+                        selectedDataset?.columns[col].name || `Column ${col}`,
                 })),
             );
             if (fromModel.mlpArchitecture) {
@@ -201,8 +203,8 @@ const NewModelForm = ({
                         title="1. Select training data"
                         tooltipContent={
                             <p>
-                                Choose the dataset from your uploaded files that
-                                will be used to train the model.
+                                Choose the dataset that will be used to train
+                                the model.
                             </p>
                         }
                     />
@@ -252,35 +254,32 @@ const NewModelForm = ({
                                 }}
                                 value={columnsToClassify}
                             />
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <InformationCircleIcon className="h-5 w-5 cursor-pointer" />
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        <p>
-                                            Select the column(s) that the model
-                                            should learn to predict.
-                                        </p>
-                                        <p>
-                                            {" "}
-                                            This is usually your output or
-                                            label.
-                                        </p>
-                                        <span className="block mt-2 font-bold text-violet-300">
-                                            Need help?
-                                        </span>{" "}
-                                        Check our{" "}
-                                        <a
-                                            href="/guide"
-                                            className="underline text-violet-300 hover:text-violet-500"
-                                        >
-                                            guide page
-                                        </a>
-                                        .
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <InformationCircleIcon className="h-5 w-5 cursor-pointer" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>
+                                        Select the column(s) that the model
+                                        should learn to predict.
+                                    </p>
+                                    <p>
+                                        {" "}
+                                        This is usually your output or label.
+                                    </p>
+                                    <span className="block mt-2 font-bold text-violet-300">
+                                        Need help?
+                                    </span>{" "}
+                                    Check our{" "}
+                                    <a
+                                        href="/guide"
+                                        className="underline text-violet-300 hover:text-violet-500"
+                                    >
+                                        guide page
+                                    </a>
+                                    .
+                                </TooltipContent>
+                            </Tooltip>
                         </div>
                         <div className="relative flex gap-2 items-center max-w-sm mx-auto">
                             <MultipleSelector
@@ -296,31 +295,29 @@ const NewModelForm = ({
                                 }}
                                 value={columnsAsParameters}
                             />
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <InformationCircleIcon className="h-5 w-5 cursor-pointer" />
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        <p>
-                                            Select the columns that the model
-                                            will use as input features to make
-                                            predictions.
-                                        </p>
-                                        <span className="block mt-2 font-bold text-violet-300">
-                                            Need help?
-                                        </span>{" "}
-                                        Check our{" "}
-                                        <a
-                                            href="/guide"
-                                            className="underline text-violet-300 hover:text-violet-500"
-                                        >
-                                            guide page
-                                        </a>
-                                        .
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <InformationCircleIcon className="h-5 w-5 cursor-pointer" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>
+                                        Select the columns that the model will
+                                        use as input features to make
+                                        predictions.
+                                    </p>
+                                    <span className="block mt-2 font-bold text-violet-300">
+                                        Need help?
+                                    </span>{" "}
+                                    Check our{" "}
+                                    <a
+                                        href="/guide"
+                                        className="underline text-violet-300 hover:text-violet-500"
+                                    >
+                                        guide page
+                                    </a>
+                                    .
+                                </TooltipContent>
+                            </Tooltip>
                         </div>
                     </div>
                 )}
