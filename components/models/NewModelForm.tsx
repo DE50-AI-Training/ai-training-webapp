@@ -16,8 +16,12 @@ import { useRouter } from "next/navigation";
 import { useCreateModel } from "@/lib/hooks/useCreateModel";
 import { Slider } from "../ui/Slider";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/Tooltip";
-
+import {
+    Tooltip,
+    TooltipTrigger,
+    TooltipContent,
+    TooltipProvider,
+} from "@/components/ui/Tooltip";
 
 const NewModelForm = ({
     fromDataset,
@@ -66,9 +70,9 @@ const NewModelForm = ({
                 mlpArchitecture:
                     selectedModel === "MLP"
                         ? {
-                            activation: activationFunction,
-                            layers,
-                        }
+                              activation: activationFunction,
+                              layers,
+                          }
                         : undefined,
                 trainingFraction,
             };
@@ -115,40 +119,40 @@ const NewModelForm = ({
 
     const columnOptions: Option[] = selectedDataset
         ? selectedDataset.columns
-            .map((column, index) => ({
-                value: index.toString(),
-                label: column,
-            }))
-            .filter((option) => {
-                const isInClassify = columnsToClassify.some(
-                    (col) => col.value === option.value,
-                );
-                const isInParameters = columnsAsParameters.some(
-                    (col) => col.value === option.value,
-                );
-                return !isInClassify && !isInParameters;
-            })
+              .map((column, index) => ({
+                  value: index.toString(),
+                  label: column.name,
+              }))
+              .filter((option) => {
+                  const isInClassify = columnsToClassify.some(
+                      (col) => col.value === option.value,
+                  );
+                  const isInParameters = columnsAsParameters.some(
+                      (col) => col.value === option.value,
+                  );
+                  return !isInClassify && !isInParameters;
+              })
         : [];
 
     useEffect(() => {
         if (problemType === "classification") {
-            const selectedColumns = columnsToClassify.map((col) =>
+            const selectedColumnIndexes = columnsToClassify.map((col) =>
                 Number(col.value),
             );
-            const uniqueValues = selectedDataset?.uniqueValuesPerColumn.filter(
-                (_, index) => selectedColumns.includes(index),
-            );
-            if (uniqueValues) {
-                const totalUniqueValues = uniqueValues.reduce(
-                    (acc, val) => acc + val,
-                    0,
-                );
-                setLayers((prev) => {
-                    const newLayers = [...prev];
-                    newLayers[newLayers.length - 1] = totalUniqueValues;
-                    return newLayers;
-                });
-            }
+
+            const totalUniqueValues =
+                selectedDataset?.columns?.reduce((acc, column, index) => {
+                    if (selectedColumnIndexes.includes(index)) {
+                        return acc + (column.uniqueValues || 0);
+                    }
+                    return acc;
+                }, 0) || 0;
+
+            setLayers((prev) => {
+                const newLayers = [...prev];
+                newLayers[newLayers.length - 1] = totalUniqueValues;
+                return newLayers;
+            });
         } else if (problemType === "regression") {
             setLayers((prev) => {
                 const newLayers = [...prev];
@@ -156,11 +160,7 @@ const NewModelForm = ({
                 return newLayers;
             });
         }
-    }, [
-        columnsToClassify,
-        problemType,
-        selectedDataset?.uniqueValuesPerColumn,
-    ]);
+    }, [columnsToClassify, problemType, selectedDataset?.columns]);
 
     // Set initial states if fromModel is provided
     useEffect(() => {
@@ -168,19 +168,17 @@ const NewModelForm = ({
             setName(fromModel.name + " (copy)" || "");
             setProblemType(fromModel.problemType || "classification");
             setdatasetId(fromModel.datasetId || null);
-            setTrainingFraction(
-                fromModel.trainingFraction || 0.8,
-            );
+            setTrainingFraction(fromModel.trainingFraction || 0.8);
             setColumnsToClassify(
                 fromModel.outputColumns.map((col) => ({
                     value: col.toString(),
-                    label: selectedDataset?.columns[col] || `Column ${col}`,
+                    label: selectedDataset?.columns[col].name || `Column ${col}`,
                 })),
             );
             setColumnsAsParameters(
                 fromModel.inputColumns.map((col) => ({
                     value: col.toString(),
-                    label: selectedDataset?.columns[col] || `Column ${col}`,
+                    label: selectedDataset?.columns[col].name || `Column ${col}`,
                 })),
             );
             if (fromModel.mlpArchitecture) {
@@ -201,7 +199,12 @@ const NewModelForm = ({
                 <div className="space-y-3">
                     <FormSection
                         title="1. Select training data"
-                        tooltipContent={<p>Choose the dataset from your uploaded files that will be used to train the model.</p>}
+                        tooltipContent={
+                            <p>
+                                Choose the dataset from your uploaded files that
+                                will be used to train the model.
+                            </p>
+                        }
                     />
                     <FormSelect
                         value={datasetId?.toString() || ""}
@@ -216,13 +219,20 @@ const NewModelForm = ({
                     <div className="space-y-3">
                         <FormSection
                             title="2. Select problem type"
-                            tooltipContent={<div>
-                                <p>Specify whether your task is:</p>
-                                <ul className="list-disc list-inside mt-1">
-                                    <li>Classification: predict categories</li>
-                                    <li>Regression: predict continuous values</li>
-                                </ul>
-                            </div>}
+                            tooltipContent={
+                                <div>
+                                    <p>Specify whether your task is:</p>
+                                    <ul className="list-disc list-inside mt-1">
+                                        <li>
+                                            Classification: predict categories
+                                        </li>
+                                        <li>
+                                            Regression: predict continuous
+                                            values
+                                        </li>
+                                    </ul>
+                                </div>
+                            }
                         />
                         <FormSelect
                             value={problemType}
@@ -248,10 +258,23 @@ const NewModelForm = ({
                                         <InformationCircleIcon className="h-5 w-5 cursor-pointer" />
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                        <p>Select the column(s) that the model should learn to predict.</p>
-                                            <p> This is usually your output or label.</p>
-                                        <span className="block mt-2 font-bold text-violet-300">Need help?</span> Check our{" "}
-                                        <a href="/guide" className="underline text-violet-300 hover:text-violet-500">
+                                        <p>
+                                            Select the column(s) that the model
+                                            should learn to predict.
+                                        </p>
+                                        <p>
+                                            {" "}
+                                            This is usually your output or
+                                            label.
+                                        </p>
+                                        <span className="block mt-2 font-bold text-violet-300">
+                                            Need help?
+                                        </span>{" "}
+                                        Check our{" "}
+                                        <a
+                                            href="/guide"
+                                            className="underline text-violet-300 hover:text-violet-500"
+                                        >
                                             guide page
                                         </a>
                                         .
@@ -279,9 +302,19 @@ const NewModelForm = ({
                                         <InformationCircleIcon className="h-5 w-5 cursor-pointer" />
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                        <p>Select the columns that the model will use as input features to make predictions.</p>
-                                        <span className="block mt-2 font-bold text-violet-300">Need help?</span> Check our{" "}
-                                        <a href="/guide" className="underline text-violet-300 hover:text-violet-500">
+                                        <p>
+                                            Select the columns that the model
+                                            will use as input features to make
+                                            predictions.
+                                        </p>
+                                        <span className="block mt-2 font-bold text-violet-300">
+                                            Need help?
+                                        </span>{" "}
+                                        Check our{" "}
+                                        <a
+                                            href="/guide"
+                                            className="underline text-violet-300 hover:text-violet-500"
+                                        >
                                             guide page
                                         </a>
                                         .
@@ -298,95 +331,114 @@ const NewModelForm = ({
                     columnsToClassify.length &&
                     columnsAsParameters.length
                 ) && (
-                        <>
-                            <div className="space-y-3 ">
-                                <FormSection
-                                    title="3. Choose architecture"
-                                    tooltipContent={<p>Select the model architecture best suited for your problem.</p>}
-                                />
-                                <FormSelect
-                                    value={selectedModel}
-                                    onChange={(value) =>
-                                        setSelectedModel(value as ModelType)
+                    <>
+                        <div className="space-y-3 ">
+                            <FormSection
+                                title="3. Choose architecture"
+                                tooltipContent={
+                                    <p>
+                                        Select the model architecture best
+                                        suited for your problem.
+                                    </p>
+                                }
+                            />
+                            <FormSelect
+                                value={selectedModel}
+                                onChange={(value) =>
+                                    setSelectedModel(value as ModelType)
+                                }
+                                options={modelOptions}
+                                placeholder="Select model"
+                            />
+                        </div>
+
+                        {/* MLP Layers table, only shown for perceptron model */}
+                        {selectedModel === "MLP" && (
+                            <MLPLayersTable
+                                layers={layers}
+                                setLayers={setLayers}
+                            />
+                        )}
+
+                        {/* Activation function selection */}
+                        <div className="space-y-3 ">
+                            <FormSection
+                                title="Activation function"
+                                tooltipContent={
+                                    <p>
+                                        Choose the activation function which
+                                        affects how neurons process inputs.
+                                    </p>
+                                }
+                            />
+                            <FormSelect
+                                value={activationFunction}
+                                onChange={(value) =>
+                                    setActivationFunction(value as Activation)
+                                }
+                                options={activationOptions}
+                                placeholder="Activation function"
+                            />
+                        </div>
+
+                        {/* Choose testing fraction section */}
+                        <div className="mx-auto space-y-3 max-w-sm">
+                            <FormSection
+                                title="4. Training data fraction"
+                                tooltipContent={
+                                    <div>
+                                        <p>
+                                            Set the fraction of the dataset to
+                                            be used for training the model.
+                                        </p>
+                                        <p>
+                                            The rest will be used for testing
+                                            its performance.
+                                        </p>
+                                    </div>
+                                }
+                            />
+                            <div className="flex items-center justify-center">
+                                <Slider
+                                    value={[trainingFraction]}
+                                    onValueChange={(value) =>
+                                        setTrainingFraction(value[0])
                                     }
-                                    options={modelOptions}
-                                    placeholder="Select model"
+                                    min={0.1}
+                                    max={0.9}
+                                    step={0.01}
                                 />
+                                <span className="ml-4">
+                                    {Math.round(trainingFraction * 100)}%
+                                </span>
                             </div>
+                        </div>
 
-                            {/* MLP Layers table, only shown for perceptron model */}
-                            {selectedModel === "MLP" && (
-                                <MLPLayersTable
-                                    layers={layers}
-                                    setLayers={setLayers}
-                                />
-                            )}
+                        {/* Choose name section */}
+                        <div className="mx-auto  space-y-3  max-w-sm">
+                            <FormSection title="5. Model name" />
+                            <Input
+                                type="text"
+                                placeholder="Model name"
+                                className=""
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                        </div>
 
-                            {/* Activation function selection */}
-                            <div className="space-y-3 ">
-                                <FormSection
-                                    title="Activation function"
-                                    tooltipContent={<p>Choose the activation function which affects how neurons process inputs.</p>}
-                                />
-                                <FormSelect
-                                    value={activationFunction}
-                                    onChange={(value) =>
-                                        setActivationFunction(value as Activation)
-                                    }
-                                    options={activationOptions}
-                                    placeholder="Activation function"
-                                />
-                            </div>
-
-                            {/* Choose testing fraction section */}
-                            <div className="mx-auto space-y-3 max-w-sm">
-                                <FormSection
-                                    title="4. Training data fraction"
-                                    tooltipContent={<div><p>Set the fraction of the dataset to be used for training the model.</p>
-                                        <p>The rest will be used for testing its performance.</p>
-                                    </div>}
-                                />
-                                <div className="flex items-center justify-center">
-                                    <Slider
-                                        value={[trainingFraction]}
-                                        onValueChange={(value) =>
-                                            setTrainingFraction(value[0])
-                                        }
-                                        min={0.1}
-                                        max={0.9}
-                                        step={0.01}
-                                    />
-                                    <span className="ml-4">
-                                        {Math.round(trainingFraction * 100)}%
-                                    </span>
-                                </div>
-                            </div>
-
-                            {/* Choose name section */}
-                            <div className="mx-auto  space-y-3  max-w-sm">
-                                <FormSection title="5. Model name" />
-                                <Input
-                                    type="text"
-                                    placeholder="Model name"
-                                    className=""
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                />
-                            </div>
-
-                            {/* Submit button */}
-                            <div className="flex justify-center space-y-3">
-                                <Button
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    variant="outline"
-                                    className="px-8 py-2  font-semibold border border-gray-400  bg-gradient-to-r from-[#D97A7A77] to-[#A48DD377] rounded-md"
-                                >
-                                    {isSubmitting ? "Creating..." : "Create"}
-                                </Button>
-                            </div>
-                        </>
-                    )}
+                        {/* Submit button */}
+                        <div className="flex justify-center space-y-3">
+                            <Button
+                                type="submit"
+                                disabled={isSubmitting}
+                                variant="outline"
+                                className="px-8 py-2  font-semibold border border-gray-400  bg-gradient-to-r from-[#D97A7A77] to-[#A48DD377] rounded-md"
+                            >
+                                {isSubmitting ? "Creating..." : "Create"}
+                            </Button>
+                        </div>
+                    </>
+                )}
             </form>
         </div>
     );
