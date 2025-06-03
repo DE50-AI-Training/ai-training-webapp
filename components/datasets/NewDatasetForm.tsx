@@ -9,6 +9,7 @@ import { createDataset, uploadDataset } from "@/lib/services/dataset";
 import { Dataset } from "@/lib/models/dataset";
 import { FormSection } from "../models/FormSection";
 import { useCreateDataset } from "@/lib/hooks/useCreateDataset";
+import { DatasetInputTable } from "./DatasetInputTable";
 
 const NewDatasetForm = () => {
     const router = useRouter();
@@ -71,11 +72,11 @@ const NewDatasetForm = () => {
                 </div>
             </div>
             {uploadedDataset && (
-                <form onSubmit={onSubmit} className="mt-6 space-y-3">
+                <form onSubmit={onSubmit} className="mt-6 space-y-10">
                     <div className="mx-auto space-y-3 max-w-sm">
                         <FormSection title="2. Data transformation" />
-                        Coming soon...
                     </div>
+                    <DatasetInputTable columns={uploadedDataset.columns} />
                     <div className="mx-auto space-y-3 max-w-sm">
                         <FormSection title="3. Dataset name" />
                         <Input

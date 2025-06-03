@@ -114,7 +114,7 @@ const NewModelForm = ({
         ? selectedDataset.columns
               .map((column, index) => ({
                   value: index.toString(),
-                  label: column,
+                  label: column.name,
               }))
               .filter((option) => {
                   const isInClassify = columnsToClassify.some(
@@ -129,23 +129,23 @@ const NewModelForm = ({
 
     useEffect(() => {
         if (problemType === "classification") {
-            const selectedColumns = columnsToClassify.map((col) =>
+            const selectedColumnIndexes = columnsToClassify.map((col) =>
                 Number(col.value),
             );
-            const uniqueValues = selectedDataset?.uniqueValuesPerColumn.filter(
-                (_, index) => selectedColumns.includes(index),
-            );
-            if (uniqueValues) {
-                const totalUniqueValues = uniqueValues.reduce(
-                    (acc, val) => acc + val,
-                    0,
-                );
-                setLayers((prev) => {
-                    const newLayers = [...prev];
-                    newLayers[newLayers.length - 1] = totalUniqueValues;
-                    return newLayers;
-                });
-            }
+
+            const totalUniqueValues =
+                selectedDataset?.columns?.reduce((acc, column, index) => {
+                    if (selectedColumnIndexes.includes(index)) {
+                        return acc + (column.uniqueValues    || 0);
+                    }
+                    return acc;
+                }, 0) || 0;
+
+            setLayers((prev) => {
+                const newLayers = [...prev];
+                newLayers[newLayers.length - 1] = totalUniqueValues;
+                return newLayers;
+            });
         } else if (problemType === "regression") {
             setLayers((prev) => {
                 const newLayers = [...prev];
@@ -153,11 +153,7 @@ const NewModelForm = ({
                 return newLayers;
             });
         }
-    }, [
-        columnsToClassify,
-        problemType,
-        selectedDataset?.uniqueValuesPerColumn,
-    ]);
+    }, [columnsToClassify, problemType, selectedDataset?.columns]);
 
     // Set initial states if fromModel is provided
     useEffect(() => {
