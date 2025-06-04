@@ -1,17 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 
 import { Input } from "../ui/Input";
 import { useRouter } from "next/navigation";
-import { createDataset, uploadDataset } from "@/lib/services/dataset";
+import {
+    createDataset,
+    duplicateDataset,
+    uploadDataset,
+} from "@/lib/services/dataset";
 import { Dataset } from "@/lib/models/dataset";
 import { FormSection } from "../models/FormSection";
 import { useCreateDataset } from "@/lib/hooks/useCreateDataset";
 import { DatasetInputTable } from "./DatasetInputTable";
 
-const NewDatasetForm = () => {
+const NewDatasetForm = ({ fromDataset }: { fromDataset: number | null }) => {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -19,6 +23,24 @@ const NewDatasetForm = () => {
 
     const [name, setName] = useState("");
     const [uploadedDataset, setUploadedDataset] = useState<Dataset | null>();
+
+    useEffect(() => {
+        if (fromDataset && !uploadedDataset) {
+            // If coming from a dataset, fetch the dataset details only once
+            const fetchDataset = async () => {
+                try {
+                    const dataset = await duplicateDataset(fromDataset);
+                    if (dataset) {
+                        setUploadedDataset(dataset);
+                        setName(dataset.name);
+                    }
+                } catch (error) {
+                    console.error("Error duplicating dataset:", error);
+                }
+            };
+            fetchDataset();
+        }
+    }, [fromDataset, uploadedDataset]);
 
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -46,7 +68,7 @@ const NewDatasetForm = () => {
             <div className="flex justify-center space-y-10">
                 <div className="mx-auto  space-y-3  max-w-sm">
                     <FormSection title="1. Upload dataset file" />
-                    <Input
+                    {!fromDataset && <Input
                         type="file"
                         placeholder="Upload dataset"
                         className=""
@@ -68,7 +90,13 @@ const NewDatasetForm = () => {
                         }}
                         accept=".csv, .xlsx, .xls"
                         required
-                    />
+                    />}
+                    {fromDataset && (
+                        <p className="text-sm text-gray-500">
+                            You are duplicating an existing dataset. You can
+                            modify the name and transformation.
+                        </p>
+                    )}
                 </div>
             </div>
             {uploadedDataset && (
@@ -94,7 +122,7 @@ const NewDatasetForm = () => {
                             type="submit"
                             disabled={isSubmitting}
                             variant="outline"
-                            className="px-8 py-2  font-semibold border border-gray-400  bg-gradient-to-r from-green-100 to-orange-100 rounded-md"
+                            className="w-[120px] bg-gradient-to-br from-green-100 to-orange-100 text-black border border-gray-300 hover:brightness-95"
                         >
                             {isSubmitting ? "Creating..." : "Create"}
                         </Button>

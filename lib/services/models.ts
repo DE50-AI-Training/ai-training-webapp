@@ -25,6 +25,12 @@ export const getModel = async (modelId: number): Promise<Model> => {
     return data;
 };
 
+export const downloadWeights = async (modelId: number) =>
+    window.open(`${BACKEND_URL}/models/${modelId}/weights`, "_blank");
+
+export const downloadArchitecture = async (modelId: number) =>
+    window.open(`${BACKEND_URL}/models/${modelId}/architecture`, "_blank");
+
 export const createModel = async (model: ModelCreate): Promise<Model> => {
     const response = await fetch(`${BACKEND_URL}/models`, {
         method: "POST",
@@ -98,4 +104,14 @@ export const updateModel = async (
     }
     const data = await response.json();
     return data;
+};
+
+export const deleteModel = async (modelId: number): Promise<void> => {
+    const response = await fetch(`${BACKEND_URL}/models/${modelId}`, {
+        method: "DELETE",
+    });
+    if (!response.ok) {
+        throw new Error("Failed to delete model");
+    }
+    return;
 };

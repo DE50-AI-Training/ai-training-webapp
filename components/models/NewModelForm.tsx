@@ -429,7 +429,7 @@ const NewModelForm = ({
                                 type="submit"
                                 disabled={isSubmitting}
                                 variant="outline"
-                                className="px-8 py-2  font-semibold border border-gray-400  bg-gradient-to-r from-[#D97A7A77] to-[#A48DD377] rounded-md"
+                                className="w-[120px] bg-gradient-to-br from-violet-200 to-rose-100 text-black border border-gray-300 hover:brightness-95"
                             >
                                 {isSubmitting ? "Creating..." : "Create"}
                             </Button>
