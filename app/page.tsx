@@ -64,7 +64,7 @@ const Home = () => {
             <div className="flex w-full flex-col bg-white rounded-xl ring-1 ring-gray-200 p-20 pt-6 pb-6">
                 {/* Titre centré */}
                 <div className="text-center">
-                    <p className="text-center text-[35px] font-bold">
+                    <p className="text-center text-4xl font-bold">
                         Welcome to SimplifyAI !
                     </p>
                     <p className="text-xl font-medium text-gray-700 mb-4">

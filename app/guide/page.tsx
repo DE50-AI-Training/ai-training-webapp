@@ -28,7 +28,7 @@ const GuidePage = () => {
         <div className="flex w-full flex-col bg-white rounded-xl ring-1 ring-gray-200 p-20 pt-6 pb-6">
             {/* Header */}
             <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold">Need some help ?</h1>
+                <h1 className="text-4xl font-bold">Need some help ?</h1>
                 <p className="text-gray-600 mt-2">
                     Watch our videos to learn how to use SimplifyAI step by
                     step.

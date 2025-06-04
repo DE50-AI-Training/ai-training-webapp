@@ -20,6 +20,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "../ui/Tooltip";
+import { trainingStatusFormat } from "@/lib/utils";
 
 const ModelCard = ({ model }: { model: Model }) => {
     const datasets = useAtomValue(datasetsAtom);
@@ -36,27 +37,13 @@ const ModelCard = ({ model }: { model: Model }) => {
     const inputLayer = layers[0] || 0;
     const hiddenLayers = layers.slice(1, -1).length || 0;
     const outputLayer = layers[layers.length - 1] || 0;
-    const activation = "relu";
+    const activation = model.mlpArchitecture?.activation;
 
     const { stop, training } = useTraining(model.id);
     const trainingStatus = training?.status ?? "stopped";
 
-    const TRAINING_STATUS_MAP: Record<
-        TrainingStatus,
-        { text: string; color: string }
-    > = {
-        stopped: { text: "Stopped", color: "bg-red-400" },
-        starting: { text: "Starting", color: "bg-blue-400" },
-        training: {
-            text: `Training`,
-            color: "bg-lime-400",
-        },
-        stopping: { text: "Stopping", color: "bg-yellow-400" },
-        error: { text: "Error", color: "bg-red-400" },
-    };
-
     const { text: trainingStatusText, color: trainingStatusColor } =
-        TRAINING_STATUS_MAP[trainingStatus];
+        trainingStatusFormat(trainingStatus);
 
     const date = new Date(model.createdAt);
     const formattedDate = date.toLocaleDateString("fr-FR", {
