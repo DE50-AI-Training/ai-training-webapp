@@ -194,8 +194,7 @@ const NewModelForm = ({
     }, [fromModel, selectedDataset]);
 
     return (
-        <div className="flex flex-col justify-center mx-auto py-10 max-w-3xl">
-            <h1 className="text-2xl font-bold mb-8 text-center">New model</h1>
+        <div className="flex flex-col justify-center mx-auto max-w-3xl w-full">
             <form onSubmit={onSubmit} className="space-y-10">
                 {/* Training data section */}
                 <div className="space-y-3">

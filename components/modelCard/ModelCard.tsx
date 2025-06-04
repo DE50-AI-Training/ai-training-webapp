@@ -1,3 +1,5 @@
+"use client"
+
 import React from "react";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Label } from "@/components/ui/Label";
@@ -18,7 +20,6 @@ import TrainPopover from "./TrainPopover";
 import {
     Tooltip,
     TooltipContent,
-    TooltipProvider,
     TooltipTrigger,
 } from "../ui/Tooltip";
 import {
@@ -31,7 +32,6 @@ import {
 import { useRouter } from "next/navigation";
 import { downloadArchitecture, downloadWeights } from "@/lib/services/models";
 import { useDeleteModel } from "@/lib/hooks/useDeleteModel";
-import { trainingStatusFormat } from "@/lib/utils";
 
 const ModelCard = ({ model }: { model: Model }) => {
     const router = useRouter();
@@ -54,10 +54,25 @@ const ModelCard = ({ model }: { model: Model }) => {
     const activation = model.mlpArchitecture?.activation;
 
     const { stop, training } = useTraining(model.id);
+
+    const TRAINING_STATUS_MAP: Record<
+        TrainingStatus,
+        { text: string; color: string }
+    > = {
+        stopped: { text: "Stopped", color: "bg-red-400" },
+        starting: { text: "Starting", color: "bg-blue-400" },
+        training: {
+            text: `Training`,
+            color: "bg-lime-400",
+        },
+        stopping: { text: "Stopping", color: "bg-yellow-400" },
+        error: { text: "Error", color: "bg-red-400" },
+    };
+
     const trainingStatus = training?.status ?? "stopped";
 
     const { text: trainingStatusText, color: trainingStatusColor } =
-        trainingStatusFormat(trainingStatus);
+        TRAINING_STATUS_MAP[trainingStatus];
 
     const date = new Date(model.createdAt);
     const formattedDate = date.toLocaleDateString("fr-FR", {

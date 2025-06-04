@@ -63,8 +63,7 @@ const NewDatasetForm = ({ fromDataset }: { fromDataset: number | null }) => {
     };
 
     return (
-        <div className="flex flex-col justify-center mx-auto py-10 max-w-3xl">
-            <h1 className="text-2xl font-bold mb-8 text-center">New dataset</h1>
+        <div className="flex flex-col justify-center mx-auto max-w-3xl">
             <div className="flex justify-center space-y-10">
                 <div className="mx-auto  space-y-3  max-w-sm">
                     <FormSection title="1. Upload dataset file" />

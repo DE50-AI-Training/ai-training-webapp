@@ -4,19 +4,40 @@ import { modelsAtom } from "@/lib/atoms/modelAtoms";
 import { useAtomValue } from "jotai";
 
 import React from "react";
-import ModelDetails from "@/components/models/modelDetailsPage.tsx/ModelDetails";
+import { useRouter } from "next/navigation";
+import TrainingFetcher from "@/components/models/TrainingFetcher";
+import PageContainer from "@/components/PageContainer";
+import ActionBar from "@/components/models/modelDetailsPage.tsx/ActionBar";
+import ModelInformationCard from "@/components/models/modelDetailsPage.tsx/ModelInformationCard";
+import UseModelCard from "@/components/models/modelDetailsPage.tsx/UseModelCard";
 
 const ModelDetailsPage = ({ params }: { params: { modelId: string } }) => {
+    const router = useRouter();
+
     const models = useAtomValue(modelsAtom);
     const model = models.find((m) => m.id === Number(params.modelId));
     if (!model) {
-        return <div>Model not found</div>;
+        router.push(`/models`);
+        return null;
     }
 
     return (
-        <div>
-            <ModelDetails model={model} />
-        </div>
+        <PageContainer title={`${model.name} model details`}>
+            {/* Loading Indicator */}
+            <TrainingFetcher delay={1000} />
+            {/* Top Buttons */}
+            <div className="mb-8">
+                <ActionBar model={model} />
+            </div>
+
+            {/* Main Grid */}
+            <div className="flex flex-col lg:flex-row gap-8">
+                {/* Model Information */}
+                <ModelInformationCard model={model} />
+                <UseModelCard model={model} />
+                {/* Try your model */}
+            </div>
+        </PageContainer>
     );
 };
 

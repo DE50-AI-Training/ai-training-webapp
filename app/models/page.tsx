@@ -14,11 +14,12 @@ import { Button } from "@/components/ui/Button";
 import { useAtomValue } from "jotai";
 import { modelsAtom } from "@/lib/atoms/modelAtoms";
 import { useRouter } from "next/navigation";
-import TrainingsPage from "@/components/models/TrainingFetcher";
+import TrainingFetcher from "@/components/models/TrainingFetcher";
 import { Input } from "@/components/ui/Input";
 import { useState } from "react";
 import DatasetPopover from "@/components/datasets/DatasetPopover";
 import { trainingsAtom } from "@/lib/atoms/trainingAtoms";
+import PageContainer from "@/components/PageContainer";
 
 const Models = () => {
     const router = useRouter();
@@ -35,39 +36,56 @@ const Models = () => {
 
     const filteredModels = models
         .filter((model) => {
-            if (selectedDatasetId !== null && model.datasetId !== selectedDatasetId)
+            if (
+                selectedDatasetId !== null &&
+                model.datasetId !== selectedDatasetId
+            )
                 return false;
-            if (problemType && problemType !== "none" && model.problemType !== problemType)
+            if (
+                problemType &&
+                problemType !== "none" &&
+                model.problemType !== problemType
+            )
                 return false;
             if (showRunningModels && !training[model.id]) return false;
-            if (searchQuery && !model.name.toLowerCase().includes(searchQuery.toLowerCase()))
+            if (
+                searchQuery &&
+                !model.name.toLowerCase().includes(searchQuery.toLowerCase())
+            )
                 return false;
             return true;
         })
         .sort((a, b) => {
             if (sortOrder === "newest")
-                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                return (
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
+                );
             if (sortOrder === "oldest")
-                return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+                return (
+                    new Date(a.createdAt).getTime() -
+                    new Date(b.createdAt).getTime()
+                );
             if (sortOrder === "title") return a.name.localeCompare(b.name);
             return 0;
         });
 
     return (
-        <div className="flex w-full flex-col bg-white rounded-xl ring-1 ring-gray-200 p-20 pt-6 pb-6">
-            <TrainingsPage delay={1000} />
-            <div className="pb-10">
-                <p className="text-center text-4xl font-bold">Models</p>
-            </div>
+        <PageContainer title="Models">
+            <TrainingFetcher delay={1000} />
             <div className="flex justify-between items-center flex-col sm:flex-row mb-8">
                 <div className="flex gap-4 items-center flex-col sm:flex-row">
                     <Select defaultValue="newest" onValueChange={setSortOrder}>
-                        <SelectTrigger className=" w-[150px] text-black font-medium px-2">
+                        <SelectTrigger className="w-[150px] text-black font-medium px-2">
                             <SelectValue placeholder="Sort by" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="newest">Date (Newest)</SelectItem>
-                            <SelectItem value="oldest">Date (Oldest)</SelectItem>
+                            <SelectItem value="newest">
+                                Date (Newest)
+                            </SelectItem>
+                            <SelectItem value="oldest">
+                                Date (Oldest)
+                            </SelectItem>
                             <SelectItem value="title">Title (A-Z)</SelectItem>
                         </SelectContent>
                     </Select>
@@ -76,13 +94,19 @@ const Models = () => {
                         setSelectedDatasetId={setSelectedDatasetId}
                     />
                     <Select defaultValue="none" onValueChange={setProblemType}>
-                        <SelectTrigger className=" w-[150px] text-black font-medium px-2">
+                        <SelectTrigger className="w-[150px] text-black font-medium px-2">
                             <SelectValue placeholder="Problem type" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="none" className="text-gray-500">Problem type</SelectItem>
-                            <SelectItem value="classification">Classification</SelectItem>
-                            <SelectItem value="regression">Regression</SelectItem>
+                            <SelectItem value="none" className="text-gray-500">
+                                Problem type
+                            </SelectItem>
+                            <SelectItem value="classification">
+                                Classification
+                            </SelectItem>
+                            <SelectItem value="regression">
+                                Regression
+                            </SelectItem>
                         </SelectContent>
                     </Select>
                     <div className="pl-2 flex items-center space-x-2">
@@ -91,7 +115,9 @@ const Models = () => {
                             checked={showRunningModels}
                             onCheckedChange={setShowRunningModels}
                         />
-                        <Label htmlFor="runningModels">Running models only</Label>
+                        <Label htmlFor="runningModels">
+                            Running models only
+                        </Label>
                     </div>
                 </div>
 
@@ -124,7 +150,7 @@ const Models = () => {
                     </div>
                 ))}
             </div>
-        </div>
+        </PageContainer>
     );
 };
 

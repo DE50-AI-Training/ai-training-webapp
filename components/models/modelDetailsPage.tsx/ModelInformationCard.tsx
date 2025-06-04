@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/Card";
+import clsx from "clsx";
 
 import {
     DropdownMenu,
@@ -13,20 +14,34 @@ import {
 import { datasetsAtom } from "@/lib/atoms/datasetAtoms";
 import { useTraining } from "@/lib/hooks/useTraining";
 import { Model } from "@/lib/models/model";
-import { TrainingStatus } from "@/lib/models/training";
 import { useAtomValue } from "jotai";
-import { trainingStatusFormat } from "@/lib/utils";
+import { TrainingStatus } from "@/lib/models/training";
+import { FormSection } from "../FormSection";
 
 const ModelInformationCard = ({ model }: { model: Model }) => {
     const datasets = useAtomValue(datasetsAtom);
     const dataset = datasets.find((dataset) => dataset.id === model.datasetId);
     const layers = model.mlpArchitecture?.layers || [];
     const { stop, training } = useTraining(model.id);
+
+    const TRAINING_STATUS_MAP: Record<
+        TrainingStatus,
+        { text: string; color: string }
+    > = {
+        stopped: { text: "Stopped", color: "bg-red-400" },
+        starting: { text: "Starting", color: "bg-blue-400" },
+        training: {
+            text: `Training`,
+            color: "bg-lime-400",
+        },
+        stopping: { text: "Stopping", color: "bg-yellow-400" },
+        error: { text: "Error", color: "bg-red-400" },
+    };
+
     const trainingStatus = training?.status ?? "stopped";
+
     const { text: trainingStatusText, color: trainingStatusColor } =
-        trainingStatusFormat(trainingStatus);
-    
-    console.log(trainingStatusColor)
+        TRAINING_STATUS_MAP[trainingStatus];
 
     const networkType = model.mlpArchitecture ? "MLP" : "";
     const problemType =
@@ -39,31 +54,32 @@ const ModelInformationCard = ({ model }: { model: Model }) => {
     const inputLayer = layers[0] || 0;
     const hiddenLayers = layers.slice(1, -1).length || 0;
     const outputLayer = layers[layers.length - 1] || 0;
-    const activation = model.mlpArchitecture?.activation
-
+    const activation = model.mlpArchitecture?.activation;
 
     return (
         <Card className="h-full w-full lg:w-1/3 bg-[#fdfdfd] border border-gray-200 shadow-none">
             <CardContent className="p-6 space-y-6">
                 <h1 className="text-3xl font-semibold text-center">
-                    Model Informations
+                    Model informations
                 </h1>
                 <hr className="border-gray-200 my-3" />
-                <div className="space-y-1">
-                    <h2 className="text-xl font-semibold mb-3">
-                        Training Informations
+                <div className="space-y-1 text-sm">
+                    <h2 className="text-lg font-medium mb-3">
+                        Training informations
                     </h2>
+                    {/* <FormSection title="Training informations" /> */}
                     <div className="flex flex-row gap-2">
                         <strong>Model status:</strong>
                         <span className="inline-flex items-center">
                             {/* Indicateur de statut */}
                             <span
-                                className={`inline-block w-4 h-4 ${trainingStatusColor} rounded-full mr-2`}
+                                className={clsx(
+                                    "inline-block w-4 h-4 rounded-full mr-2",
+                                    trainingStatusColor,
+                                )}
                             ></span>
                             {/* Texte de statut */}
-                            <span className=" mr-0.5">
-                                {trainingStatusText}
-                            </span>
+                            <span className="mr-0.5">{trainingStatusText}</span>
                         </span>
                     </div>
                     <div className="flex flex-row gap-2">
@@ -75,9 +91,9 @@ const ModelInformationCard = ({ model }: { model: Model }) => {
                     </div>
                 </div>
                 <hr className="border-gray-200 my-3" />
-                <div className="space-y-1">
-                    <p className="text-xl font-semibold mb-3">
-                        Architecture Informations
+                <div className="space-y-1 text-sm   ">
+                    <p className="text-lg font-medium mb-3">
+                        Architecture informations
                     </p>
                     <p>
                         <strong>Dataset:</strong> {dataset?.name}
