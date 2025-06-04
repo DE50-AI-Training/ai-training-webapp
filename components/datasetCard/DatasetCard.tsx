@@ -123,30 +123,28 @@ const DatasetCard = ({ dataset }: { dataset: Dataset }) => {
             <div className="mt-3 border-t border-gray-200 flex justify-between items-center bg-gray-50 rounded-b-lg p-1 px-2">
                 <div className="flex items-center">
                     {/* Texte de statut */}
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <span className="underline text-[13px]">
-                                    Used in {modelsUsed.length} models
-                                </span>
-                            </TooltipTrigger>
-                            <TooltipContent className="p-2">
-                                <ul className="text-md">
-                                    {modelsUsed.map((model) => (
-                                        <li key={model.id}>
-                                            -{" "}
-                                            <a
-                                                className="underline"
-                                                href={`/models/${model.id}`}
-                                            >
-                                                {model.name}
-                                            </a>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className="underline text-[13px]">
+                                Used in {modelsUsed.length} models
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent className="p-2">
+                            <ul className="text-md">
+                                {modelsUsed.map((model) => (
+                                    <li key={model.id}>
+                                        -{" "}
+                                        <a
+                                            className="underline"
+                                            href={`/models/${model.id}`}
+                                        >
+                                            {model.name}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </TooltipContent>
+                    </Tooltip>
                 </div>
 
                 <div className="flex items-center space-x-2">

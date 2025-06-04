@@ -15,6 +15,13 @@ import { Activation, ModelType } from "@/lib/models/architecture";
 import { useRouter } from "next/navigation";
 import { useCreateModel } from "@/lib/hooks/useCreateModel";
 import { Slider } from "../ui/Slider";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import {
+    Tooltip,
+    TooltipTrigger,
+    TooltipContent,
+    TooltipProvider,
+} from "@/components/ui/Tooltip";
 
 const NewModelForm = ({
     fromDataset,
@@ -136,7 +143,7 @@ const NewModelForm = ({
             const totalUniqueValues =
                 selectedDataset?.columns?.reduce((acc, column, index) => {
                     if (selectedColumnIndexes.includes(index)) {
-                        return acc + (column.uniqueValues    || 0);
+                        return acc + (column.uniqueValues || 0);
                     }
                     return acc;
                 }, 0) || 0;
@@ -161,19 +168,19 @@ const NewModelForm = ({
             setName(fromModel.name + " (copy)" || "");
             setProblemType(fromModel.problemType || "classification");
             setdatasetId(fromModel.datasetId || null);
-            setTrainingFraction(
-                fromModel.trainingFraction || 0.8,
-            );
+            setTrainingFraction(fromModel.trainingFraction || 0.8);
             setColumnsToClassify(
                 fromModel.outputColumns.map((col) => ({
                     value: col.toString(),
-                    label: selectedDataset?.columns[col].name || `Column ${col}`,
+                    label:
+                        selectedDataset?.columns[col].name || `Column ${col}`,
                 })),
             );
             setColumnsAsParameters(
                 fromModel.inputColumns.map((col) => ({
                     value: col.toString(),
-                    label: selectedDataset?.columns[col].name  || `Column ${col}`,
+                    label:
+                        selectedDataset?.columns[col].name || `Column ${col}`,
                 })),
             );
             if (fromModel.mlpArchitecture) {
@@ -194,7 +201,12 @@ const NewModelForm = ({
                 <div className="space-y-3">
                     <FormSection
                         title="1. Select training data"
-                        tootipContent="Choose the dataset to use for training"
+                        tooltipContent={
+                            <p>
+                                Choose the dataset that will be used to train
+                                the model.
+                            </p>
+                        }
                     />
                     <FormSelect
                         value={datasetId?.toString() || ""}
@@ -209,7 +221,20 @@ const NewModelForm = ({
                     <div className="space-y-3">
                         <FormSection
                             title="2. Select problem type"
-                            tootipContent="Choose the type of problem to solve"
+                            tooltipContent={
+                                <div>
+                                    <p>Specify whether your task is:</p>
+                                    <ul className="list-disc list-inside mt-1">
+                                        <li>
+                                            Classification: predict categories
+                                        </li>
+                                        <li>
+                                            Regression: predict continuous
+                                            values
+                                        </li>
+                                    </ul>
+                                </div>
+                            }
                         />
                         <FormSelect
                             value={problemType}
@@ -220,29 +245,80 @@ const NewModelForm = ({
                             placeholder="Problem type"
                         />
                         {/* Commented select elements */}
-                        <MultipleSelector
-                            options={columnOptions}
-                            placeholder="Target column(s)"
-                            onChange={(value) => {
-                                setColumnsToClassify(value);
-                            }}
-                            value={columnsToClassify}
-                            className="w-1000² mx-auto"
-                        />
-                        <MultipleSelector
-                            options={columnOptions}
-                            placeholder="Input columns"
-                            onChange={(value) => {
-                                setColumnsAsParameters(value);
-                                setLayers((prev) => {
-                                    const newLayers = [...prev];
-                                    newLayers[0] = value.length;
-                                    return newLayers;
-                                });
-                            }}
-                            value={columnsAsParameters}
-                            className="w-sm mx-auto"
-                        />
+                        <div className="relative flex gap-2 items-center max-w-sm mx-auto">
+                            <MultipleSelector
+                                options={columnOptions}
+                                placeholder="Target column(s)"
+                                onChange={(value) => {
+                                    setColumnsToClassify(value);
+                                }}
+                                value={columnsToClassify}
+                            />
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <InformationCircleIcon className="h-5 w-5 cursor-pointer" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>
+                                        Select the column(s) that the model
+                                        should learn to predict.
+                                    </p>
+                                    <p>
+                                        {" "}
+                                        This is usually your output or label.
+                                    </p>
+                                    <span className="block mt-2 font-bold text-violet-300">
+                                        Need help?
+                                    </span>{" "}
+                                    Check our{" "}
+                                    <a
+                                        href="/guide"
+                                        className="underline text-violet-300 hover:text-violet-500"
+                                    >
+                                        guide page
+                                    </a>
+                                    .
+                                </TooltipContent>
+                            </Tooltip>
+                        </div>
+                        <div className="relative flex gap-2 items-center max-w-sm mx-auto">
+                            <MultipleSelector
+                                options={columnOptions}
+                                placeholder="Input columns"
+                                onChange={(value) => {
+                                    setColumnsAsParameters(value);
+                                    setLayers((prev) => {
+                                        const newLayers = [...prev];
+                                        newLayers[0] = value.length;
+                                        return newLayers;
+                                    });
+                                }}
+                                value={columnsAsParameters}
+                            />
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <InformationCircleIcon className="h-5 w-5 cursor-pointer" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>
+                                        Select the columns that the model will
+                                        use as input features to make
+                                        predictions.
+                                    </p>
+                                    <span className="block mt-2 font-bold text-violet-300">
+                                        Need help?
+                                    </span>{" "}
+                                    Check our{" "}
+                                    <a
+                                        href="/guide"
+                                        className="underline text-violet-300 hover:text-violet-500"
+                                    >
+                                        guide page
+                                    </a>
+                                    .
+                                </TooltipContent>
+                            </Tooltip>
+                        </div>
                     </div>
                 )}
 
@@ -256,7 +332,12 @@ const NewModelForm = ({
                         <div className="space-y-3 ">
                             <FormSection
                                 title="3. Choose architecture"
-                                tootipContent="Choose the type of model to train"
+                                tooltipContent={
+                                    <p>
+                                        Select the model architecture best
+                                        suited for your problem.
+                                    </p>
+                                }
                             />
                             <FormSelect
                                 value={selectedModel}
@@ -280,7 +361,12 @@ const NewModelForm = ({
                         <div className="space-y-3 ">
                             <FormSection
                                 title="Activation function"
-                                tootipContent="Choose the activation function for the model"
+                                tooltipContent={
+                                    <p>
+                                        Choose the activation function which
+                                        affects how neurons process inputs.
+                                    </p>
+                                }
                             />
                             <FormSelect
                                 value={activationFunction}
@@ -296,7 +382,18 @@ const NewModelForm = ({
                         <div className="mx-auto space-y-3 max-w-sm">
                             <FormSection
                                 title="4. Training data fraction"
-                                tootipContent="Choose training fraction for the model"
+                                tooltipContent={
+                                    <div>
+                                        <p>
+                                            Set the fraction of the dataset to
+                                            be used for training the model.
+                                        </p>
+                                        <p>
+                                            The rest will be used for testing
+                                            its performance.
+                                        </p>
+                                    </div>
+                                }
                             />
                             <div className="flex items-center justify-center">
                                 <Slider
