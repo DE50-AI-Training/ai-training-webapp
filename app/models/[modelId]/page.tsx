@@ -7,9 +7,9 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import TrainingFetcher from "@/components/models/TrainingFetcher";
 import PageContainer from "@/components/PageContainer";
-import ActionBar from "@/components/models/modelDetailsPage.tsx/ActionBar";
-import ModelInformationCard from "@/components/models/modelDetailsPage.tsx/ModelInformationCard";
-import UseModelCard from "@/components/models/modelDetailsPage.tsx/UseModelCard";
+import ActionBar from "@/components/models/modelDetailsPage/ActionBar";
+import ModelInformationCard from "@/components/models/modelDetailsPage/ModelInformationCard";
+import UseModelCard from "@/components/models/modelDetailsPage/PredictionCard";
 
 const ModelDetailsPage = ({ params }: { params: { modelId: string } }) => {
     const router = useRouter();
@@ -22,7 +22,7 @@ const ModelDetailsPage = ({ params }: { params: { modelId: string } }) => {
     }
 
     return (
-        <PageContainer title={`${model.name} model details`}>
+        <PageContainer title={`"${model.name}" model details`}>
             {/* Loading Indicator */}
             <TrainingFetcher delay={1000} />
             {/* Top Buttons */}

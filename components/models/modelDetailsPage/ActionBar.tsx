@@ -43,7 +43,7 @@ const ActionBar = ({ model }: { model: Model }) => {
                     {!isTraining && (
                         <Popover>
                             <PopoverTrigger asChild>
-                                <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2 bg-gradient-to-br from-violet-200 to-rose-100 text-black border border-gray-300 hover:brightness-95">
+                                <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2 bg-gradient-to-br from-violet-200 to-rose-100 text-black border border-gray-300 hover:brightness-95 shadow-sm">
                                     <PlayIcon className="w-4 h-4" />
                                     Start training
                                 </button>

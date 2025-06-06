@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React from "react";
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -17,11 +17,7 @@ import { TrainingStatus } from "@/lib/models/training";
 import { Spinner } from "../ui/Spinner";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
 import TrainPopover from "./TrainPopover";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
-} from "../ui/Tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/Tooltip";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -171,21 +167,21 @@ const ModelCard = ({ model }: { model: Model }) => {
                     </p>
                     <p>
                         <strong className="font-medium text-gray-800 mr-1">
-                            Input layer:
+                            Input columns:
                         </strong>
-                        {inputLayer} neurons
+                        {model.inputColumns.length} columns
+                    </p>
+                    <p>
+                        <strong className="font-medium text-gray-800 mr-1">
+                            Output columns:
+                        </strong>
+                        {model.outputColumns.length} columns
                     </p>
                     <p>
                         <strong className="font-medium text-gray-800 mr-1">
                             Hidden layers:
                         </strong>
                         {hiddenLayers} layers
-                    </p>
-                    <p>
-                        <strong className="font-medium text-gray-800 mr-1">
-                            Output layer:
-                        </strong>
-                        {outputLayer} neurons
                     </p>
                 </div>
                 <hr className="border-gray-200 my-3" /> {/* Séparateur */}
@@ -236,8 +232,8 @@ const ModelCard = ({ model }: { model: Model }) => {
                                     </p>
                                     <p>
                                         {model.problemType === "classification"
-                                            ? `Accuracy: ${training?.score?.toFixed(2) ?? "Not available"}`
-                                            : `Mean Absolute Error: ${training?.score?.toFixed(2) ?? "Not available"}`}
+                                            ? `Accuracy: ${training?.accuracy?.toFixed(2) ?? "Not available"}`
+                                            : `Mean Absolute Error: ${training?.avgAbsError?.toFixed(2) ?? "Not available"}`}
                                     </p>
                                 </TooltipContent>
                             </Tooltip>
