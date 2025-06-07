@@ -1,3 +1,5 @@
+"use client"
+
 import { Model } from "@/lib/models/model";
 import { Label } from "../ui/Label";
 import { Input } from "../ui/Input";

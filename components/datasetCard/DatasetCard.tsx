@@ -8,10 +8,24 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "../ui/Tooltip";
+import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuTrigger,
+} from "@/components/ui/DropdownMenu";
+import { useDeleteDataset } from "@/lib/hooks/useDeleteDataset";
+import { useRouter } from "next/navigation";
 
 const DatasetCard = ({ dataset }: { dataset: Dataset }) => {
+    const router = useRouter();
+
     const models = useAtomValue(modelsAtom);
     const modelsUsed = models.filter((model) => model.datasetId === dataset.id);
+    const { delete: deleteDataset } = useDeleteDataset();
 
     const dataType = dataset.datasetType === "csv" ? "CSV" : "";
     const date = new Date(dataset.createdAt);
@@ -25,12 +39,44 @@ const DatasetCard = ({ dataset }: { dataset: Dataset }) => {
 
     return (
         // Conteneur principal de la carte md:w-full -> shadow-lg
-        <div className="w-full mx-auto my-5 font-sans rounded-lg shadow-lg border border-gray-300 bg-gradient-to-br from-green-100 to-orange-100">
+        <div className="w-full mx-auto my-5 font-sans rounded-lg shadow-md border border-gray-300 bg-gradient-to-br from-green-100 to-orange-100">
             {/* En-tête */}
             <div className="mb-1 pb-2 pl-4 p-3 ">
-                <h2 className="text-xl font-bold text-gray-800">
-                    {dataset.name}
-                </h2>
+                <div className="flex items-center justify-between">
+                    <h2 className="text-xl font-bold text-gray-800">
+                        {dataset.name}
+                    </h2>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <EllipsisVerticalIcon className="h-6 w-6 text-gray-800 cursor-pointer" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-48">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem
+                                onClick={() => {
+                                    router.push(
+                                        `/datasets/new?fromDataset=${dataset.id}`,
+                                    );
+                                }}
+                            >
+                                Duplicate
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => {
+                                    if (
+                                        confirm(
+                                            "Are you sure you want to delete this dataset?\nYOU WILL LOOSE ALL MODELS ASSOCIATED WITH THIS DATASET!",
+                                        )
+                                    ) {
+                                        deleteDataset(dataset.id);
+                                    }
+                                }}
+                            >
+                                Delete
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
                 <p className="text-[12px] text-gray-600">{formattedDate}</p>
             </div>
 

@@ -6,6 +6,7 @@ export type DatasetColumn = {
     name: string;
     type: DatasetColumnTypeEnum;
     uniqueValues: number;
+    classes: string[] | null;
     nullCount: number;
 };
 
