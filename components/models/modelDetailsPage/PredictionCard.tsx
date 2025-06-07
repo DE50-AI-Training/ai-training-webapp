@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { FormSection } from "@/components/models/FormSection";
-import { Model } from "@/lib/models/model";
+import { InferConfig, Model } from "@/lib/models/model";
 import { Button } from "@/components/ui/Button";
 import { useState } from "react";
 import {
@@ -23,6 +23,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/Select";
+import { inferModel, inferModelSingleInput } from "@/lib/services/models";
+import { ClipboardIcon } from "@heroicons/react/24/outline";
 
 const UseModelCard = ({ model }: { model: Model }) => {
     const datasets = useAtomValue(datasetsAtom);
@@ -124,6 +126,16 @@ const UseModelCard = ({ model }: { model: Model }) => {
         }));
     };
 
+    const [predictionResult, setPredictionResult] = useState<string | null>(
+        null,
+    );
+
+    const copyToClipboard = () => {
+        if (predictionResult) {
+            navigator.clipboard.writeText(predictionResult);    
+        }
+    };
+
     if (!dataset) {
         return null;
     }
@@ -219,12 +231,19 @@ const UseModelCard = ({ model }: { model: Model }) => {
                                             }
                                         />
                                         <Button
-                                            className="bg-gradient-to-br from-green-100 to-orange-100 text-black w-full max-w-[10rem] border border-gray-300 hover:brightness-95 mt-8 disabled:opacity-50"
+                                            className="bg-gradient-to-br from-green-100 to-orange-100 text-black w-full max-w-[10rem] border border-gray-300 hover:brightness-95 mt-8 disabled:opacity-50 mx-auto"
                                             disabled={!areAllColumnsMapped()}
                                             onClick={() => {
-                                                console.log(
-                                                    "Generating result with mapped columns:",
-                                                    selectedColumns,
+                                                const inferConfig: InferConfig =
+                                                    {
+                                                        batch_size: 32,
+                                                        dataset_id:
+                                                            uploadedDataset?.id,
+                                                    };
+                                                inferModel(
+                                                    model.id,
+                                                    inferConfig,
+                                                    "result.csv",
                                                 );
                                             }}
                                         >
@@ -277,7 +296,9 @@ const UseModelCard = ({ model }: { model: Model }) => {
                                                             (value) => (
                                                                 <SelectItem
                                                                     key={value}
-                                                                    value={value}
+                                                                    value={
+                                                                        value
+                                                                    }
                                                                 >
                                                                     {value}
                                                                 </SelectItem>
@@ -311,16 +332,55 @@ const UseModelCard = ({ model }: { model: Model }) => {
                                     <Button
                                         className="bg-gradient-to-br from-green-100 to-orange-100 text-black w-full max-w-[10rem] border border-gray-300 hover:brightness-95 disabled:opacity-50"
                                         disabled={!areAllManualInputsFilled()}
-                                        onClick={() => {
-                                            console.log(
-                                                "Generating result with manual inputs:",
-                                                manualInputs,
+                                        onClick={async () => {
+                                            const orderedInputs =
+                                                model.inputColumns.map(
+                                                    (columnIndex) => {
+                                                        const value =
+                                                            manualInputs[
+                                                                columnIndex
+                                                            ];
+                                                        const column =
+                                                            dataset.columns[
+                                                                columnIndex
+                                                            ];
+
+                                                        // For categorical columns, return the string value
+                                                        if (
+                                                            column.type ===
+                                                            "categorical"
+                                                        ) {
+                                                            return value;
+                                                        }
+                                                        // For numerical columns, parse as float
+                                                        return parseFloat(
+                                                            value,
+                                                        );
+                                                    },
+                                                );
+
+                                            const result =
+                                                await inferModelSingleInput(
+                                                    model.id,
+                                                    orderedInputs,
+                                                );
+                                            setPredictionResult(
+                                                result.toString(),
                                             );
                                         }}
                                     >
                                         Generate Result
                                     </Button>
                                 </div>
+                                    <div className="flex items-center space-x-3">
+                                        <div className="px-4 py-2 bg-white border border-gray-300 rounded-md font-mono text-sm text-center mx-auto  h-9 ">
+                                            {predictionResult}
+                                            <ClipboardIcon
+                                                className="inline-block w-4 h-4 ml-4 cursor-pointer"
+                                                onClick={copyToClipboard}
+                                            />
+                                        </div>
+                                    </div>
                             </div>
                         </div>
                     )}

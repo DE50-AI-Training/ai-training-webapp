@@ -29,3 +29,8 @@ export type ModelCreate = ModelBase & {
 export type ModelUpdate = {
     name?: string;
 };
+
+export type InferConfig = {
+    dataset_id: number;
+    batch_size: number;
+};

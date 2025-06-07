@@ -1,6 +1,5 @@
-import { cache } from "react";
 import { BACKEND_URL } from "../env";
-import { Model, ModelCreate, ModelUpdate } from "../models/model";
+import { InferConfig, Model, ModelCreate, ModelUpdate } from "../models/model";
 import { Training, TrainingStart } from "../models/training";
 
 export const getModels = async (): Promise<Model[]> => {
@@ -75,6 +74,53 @@ export const stopTraining = async (modelId: number): Promise<void> => {
         throw new Error("Failed to stop training");
     }
     return;
+};
+export const inferModel = async (
+    modelId: number,
+    config: InferConfig,
+    filename: string,
+) => {
+    const response = await fetch(`${BACKEND_URL}/models/${modelId}/infer`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(config),
+    });
+    if (!response.ok) {
+        throw new Error("Failed to infer model");
+    }
+
+    const blob = await response.blob();
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(link.href);
+};
+
+export const inferModelSingleInput = async (
+    modelId: number,
+    input: (string | number)[],
+): Promise<string> => {
+    console.log("Infer model with single input", modelId, input);
+    const response = await fetch(
+        `${BACKEND_URL}/models/${modelId}/infer-single`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(input),
+        },
+    );
+    if (!response.ok) {
+        throw new Error("Failed to infer model with single input");
+    }
+    const data = await response.json();
+    return data.prediction;
 };
 
 export const getTrainings = async (): Promise<Training[]> => {
