@@ -132,13 +132,30 @@ const UseModelCard = ({ model }: { model: Model }) => {
 
     const copyToClipboard = () => {
         if (predictionResult) {
-            navigator.clipboard.writeText(predictionResult);    
+            navigator.clipboard.writeText(predictionResult);
         }
     };
 
     if (!dataset) {
         return null;
     }
+
+    const generateSingleInputPrediction = async () => {
+        const orderedInputs = model.inputColumns.map((columnIndex) => {
+            const value = manualInputs[columnIndex];
+            const column = dataset.columns[columnIndex];
+
+            // For categorical columns, return the string value
+            if (column.type === "categorical") {
+                return value;
+            }
+            // For numerical columns, parse as float
+            return parseFloat(value);
+        });
+
+        const result = await inferModelSingleInput(model.id, orderedInputs);
+        setPredictionResult(result.toString());
+    };
 
     return (
         <Card className="h-full w-full lg:w-2/3 bg-[#fdfdfd] border border-gray-200 shadow-none">
@@ -332,46 +349,12 @@ const UseModelCard = ({ model }: { model: Model }) => {
                                     <Button
                                         className="bg-gradient-to-br from-green-100 to-orange-100 text-black w-full max-w-[10rem] border border-gray-300 hover:brightness-95 disabled:opacity-50"
                                         disabled={!areAllManualInputsFilled()}
-                                        onClick={async () => {
-                                            const orderedInputs =
-                                                model.inputColumns.map(
-                                                    (columnIndex) => {
-                                                        const value =
-                                                            manualInputs[
-                                                                columnIndex
-                                                            ];
-                                                        const column =
-                                                            dataset.columns[
-                                                                columnIndex
-                                                            ];
-
-                                                        // For categorical columns, return the string value
-                                                        if (
-                                                            column.type ===
-                                                            "categorical"
-                                                        ) {
-                                                            return value;
-                                                        }
-                                                        // For numerical columns, parse as float
-                                                        return parseFloat(
-                                                            value,
-                                                        );
-                                                    },
-                                                );
-
-                                            const result =
-                                                await inferModelSingleInput(
-                                                    model.id,
-                                                    orderedInputs,
-                                                );
-                                            setPredictionResult(
-                                                result.toString(),
-                                            );
-                                        }}
+                                        onClick={generateSingleInputPrediction}
                                     >
                                         Generate Result
                                     </Button>
                                 </div>
+                                {predictionResult && (
                                     <div className="flex items-center space-x-3">
                                         <div className="px-4 py-2 bg-white border border-gray-300 rounded-md font-mono text-sm text-center mx-auto  h-9 ">
                                             {predictionResult}
@@ -381,6 +364,7 @@ const UseModelCard = ({ model }: { model: Model }) => {
                                             />
                                         </div>
                                     </div>
+                                )}
                             </div>
                         </div>
                     )}
