@@ -5,7 +5,7 @@ import { getModel, getTrainings } from "@/lib/services/models";
 import { useAtom, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 
-const TrainingsPage = ({ delay }: { delay: number }) => {
+const TrainingFetcher = ({ delay }: { delay: number }) => {
     const [trainings, setTrainings] = useAtom(trainingsAtom);
     const count = Object.keys(trainings).length;
     const [loading, setLoading] = useState(true);
@@ -59,4 +59,4 @@ const TrainingsPage = ({ delay }: { delay: number }) => {
     return null;
 };
 
-export default TrainingsPage;
+export default TrainingFetcher;

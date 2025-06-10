@@ -22,6 +22,13 @@ import {
     TooltipContent,
     TooltipProvider,
 } from "@/components/ui/Tooltip";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/Select";
 
 const NewModelForm = ({
     fromDataset,
@@ -38,7 +45,7 @@ const NewModelForm = ({
     const [problemType, setProblemType] =
         useState<ProblemType>("classification");
     const [datasetId, setdatasetId] = useState<number | null>(fromDataset);
-    const [columnsToClassify, setColumnsToClassify] = useState<Option[]>([]);
+    const [columnToClassify, setColumnToClassify] = useState<string>("");
     const [columnsAsParameters, setColumnsAsParameters] = useState<Option[]>(
         [],
     );
@@ -62,9 +69,7 @@ const NewModelForm = ({
                 inputColumns: columnsAsParameters.map((col) =>
                     Number(col.value),
                 ),
-                outputColumns: columnsToClassify.map((col) =>
-                    Number(col.value),
-                ),
+                outputColumns: columnToClassify ? [Number(columnToClassify)] : [],
                 name,
                 problemType,
                 mlpArchitecture:
@@ -124,29 +129,35 @@ const NewModelForm = ({
                   label: column.name,
               }))
               .filter((option) => {
-                  const isInClassify = columnsToClassify.some(
-                      (col) => col.value === option.value,
-                  );
+                  const isTargetColumn = columnToClassify === option.value;
                   const isInParameters = columnsAsParameters.some(
                       (col) => col.value === option.value,
                   );
-                  return !isInClassify && !isInParameters;
+                  return !isTargetColumn && !isInParameters;
+              })
+        : [];
+
+    const targetColumnOptions: Option[] = selectedDataset
+        ? selectedDataset.columns
+              .map((column, index) => ({
+                  value: index.toString(),
+                  label: column.name,
+              }))
+              .filter((option) => {
+                  const isInParameters = columnsAsParameters.some(
+                      (col) => col.value === option.value,
+                  );
+                  return !isInParameters;
               })
         : [];
 
     useEffect(() => {
         if (problemType === "classification") {
-            const selectedColumnIndexes = columnsToClassify.map((col) =>
-                Number(col.value),
-            );
+            const selectedColumnIndex = columnToClassify ? Number(columnToClassify) : -1;
 
-            const totalUniqueValues =
-                selectedDataset?.columns?.reduce((acc, column, index) => {
-                    if (selectedColumnIndexes.includes(index)) {
-                        return acc + (column.uniqueValues || 0);
-                    }
-                    return acc;
-                }, 0) || 0;
+            const totalUniqueValues = selectedColumnIndex >= 0 && selectedDataset?.columns?.[selectedColumnIndex]
+                ? selectedDataset.columns[selectedColumnIndex].uniqueValues || 0
+                : 0;
 
             setLayers((prev) => {
                 const newLayers = [...prev];
@@ -156,11 +167,11 @@ const NewModelForm = ({
         } else if (problemType === "regression") {
             setLayers((prev) => {
                 const newLayers = [...prev];
-                newLayers[newLayers.length - 1] = columnsToClassify.length;
+                newLayers[newLayers.length - 1] = columnToClassify ? 1 : 0;
                 return newLayers;
             });
         }
-    }, [columnsToClassify, problemType, selectedDataset?.columns]);
+    }, [columnToClassify, problemType, selectedDataset?.columns]);
 
     // Set initial states if fromModel is provided
     useEffect(() => {
@@ -169,12 +180,10 @@ const NewModelForm = ({
             setProblemType(fromModel.problemType || "classification");
             setdatasetId(fromModel.datasetId || null);
             setTrainingFraction(fromModel.trainingFraction || 0.8);
-            setColumnsToClassify(
-                fromModel.outputColumns.map((col) => ({
-                    value: col.toString(),
-                    label:
-                        selectedDataset?.columns[col].name || `Column ${col}`,
-                })),
+            setColumnToClassify(
+                fromModel.outputColumns.length > 0 
+                    ? fromModel.outputColumns[0].toString() 
+                    : ""
             );
             setColumnsAsParameters(
                 fromModel.inputColumns.map((col) => ({
@@ -194,8 +203,7 @@ const NewModelForm = ({
     }, [fromModel, selectedDataset]);
 
     return (
-        <div className="flex flex-col justify-center mx-auto py-10 max-w-3xl">
-            <h1 className="text-2xl font-bold mb-8 text-center">New model</h1>
+        <div className="flex flex-col justify-center mx-auto max-w-3xl w-full">
             <form onSubmit={onSubmit} className="space-y-10">
                 {/* Training data section */}
                 <div className="space-y-3">
@@ -246,25 +254,28 @@ const NewModelForm = ({
                         />
                         {/* Commented select elements */}
                         <div className="relative flex gap-2 items-center max-w-sm mx-auto">
-                            <MultipleSelector
-                                options={columnOptions}
-                                placeholder="Target column(s)"
-                                onChange={(value) => {
-                                    setColumnsToClassify(value);
-                                }}
-                                value={columnsToClassify}
-                            />
+                            <Select value={columnToClassify} onValueChange={setColumnToClassify}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Target column" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {targetColumnOptions.map((option) => (
+                                        <SelectItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <InformationCircleIcon className="h-5 w-5 cursor-pointer" />
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p>
-                                        Select the column(s) that the model
+                                        Select the column that the model
                                         should learn to predict.
                                     </p>
                                     <p>
-                                        {" "}
                                         This is usually your output or label.
                                     </p>
                                     <span className="block mt-2 font-bold text-violet-300">
@@ -325,7 +336,7 @@ const NewModelForm = ({
                 {/* Architecture selection section */}
                 {!!(
                     datasetId &&
-                    columnsToClassify.length &&
+                    columnToClassify &&
                     columnsAsParameters.length
                 ) && (
                     <>

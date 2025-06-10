@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { useState } from "react";
 import { modelsAtom } from "@/lib/atoms/modelAtoms";
+import PageContainer from "@/components/PageContainer";
 
 const Datasets = () => {
     const router = useRouter();
@@ -29,24 +30,35 @@ const Datasets = () => {
 
     const filteredDatasets = datasets
         .filter((dataset) => {
-            if (showUsedInModels && !models.some((model) => model.datasetId === dataset.id)) return false;
-            if (searchQuery && !dataset.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+            if (
+                showUsedInModels &&
+                !models.some((model) => model.datasetId === dataset.id)
+            )
+                return false;
+            if (
+                searchQuery &&
+                !dataset.name.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+                return false;
             return true;
         })
         .sort((a, b) => {
-            if (sortOrder === "newest") return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-            if (sortOrder === "oldest") return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+            if (sortOrder === "newest")
+                return (
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
+                );
+            if (sortOrder === "oldest")
+                return (
+                    new Date(a.createdAt).getTime() -
+                    new Date(b.createdAt).getTime()
+                );
             if (sortOrder === "title") return a.name.localeCompare(b.name);
             return 0;
         });
 
     return (
-        <div className="flex w-full flex-col bg-white rounded-xl ring-1 ring-gray-200 p-20 pt-6 pb-6">
-            <div className="pb-10">
-                <p className="text-center text-[35px] font-bold">
-                    Training Data
-                </p>
-            </div>
+        <PageContainer title="Datasets">
             <div className="flex justify-between items-center flex-col sm:flex-row mb-8">
                 <div className="flex gap-4 items-center flex-col sm:flex-row">
                     <Select defaultValue="newest" onValueChange={setSortOrder}>
@@ -104,7 +116,7 @@ const Datasets = () => {
                     </div>
                 ))}
             </div>
-        </div>
+        </PageContainer>
     );
 };
 

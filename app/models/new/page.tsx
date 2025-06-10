@@ -1,6 +1,7 @@
 "use client";
 
 import NewModelForm from "@/components/models/NewModelForm";
+import PageContainer from "@/components/PageContainer";
 import { modelsAtom } from "@/lib/atoms/modelAtoms";
 import { useAtomValue } from "jotai";
 import { useSearchParams } from "next/navigation";
@@ -11,15 +12,18 @@ const NewModelPage = () => {
     const modelId = searchParams.get("fromModel");
 
     const models = useAtomValue(modelsAtom);
-    const model = modelId ? models.find((m) => m.id === Number(modelId)) ?? null : null;
+    const model = modelId
+        ? (models.find((m) => m.id === Number(modelId)) ?? null)
+        : null;
 
     return (
-        <div className="bg-white rounded-xl ring-1 ring-gray-200 p-20 pt-6 pb-6">
+        <PageContainer title="New Model">
+
             <NewModelForm
                 fromDataset={datasetId && !modelId ? Number(datasetId) : null}
                 fromModel={model}
             />
-        </div>
+        </PageContainer>
     );
 };
 

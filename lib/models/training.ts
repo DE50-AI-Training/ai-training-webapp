@@ -19,5 +19,6 @@ export type Training = TrainingBase & {
     trainingTimeAtStart: string;
     status: TrainingStatus;
     modelId: number;
-    score: number | null;
+    accuracy: number | null;
+    avgAbsError: number | null;
 };

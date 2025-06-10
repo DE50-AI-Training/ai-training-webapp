@@ -3,18 +3,42 @@
 import { modelsAtom } from "@/lib/atoms/modelAtoms";
 import { useAtomValue } from "jotai";
 
-const Model = ({ params }: { params: { modelId: string } }) => {
+import React from "react";
+import { useRouter } from "next/navigation";
+import TrainingFetcher from "@/components/models/TrainingFetcher";
+import PageContainer from "@/components/PageContainer";
+import ActionBar from "@/components/models/modelDetailsPage/ActionBar";
+import ModelInformationCard from "@/components/models/modelDetailsPage/ModelInformationCard";
+import UseModelCard from "@/components/models/modelDetailsPage/PredictionCard";
+
+const ModelDetailsPage = ({ params }: { params: { modelId: string } }) => {
+    const router = useRouter();
+
     const models = useAtomValue(modelsAtom);
     const model = models.find((m) => m.id === Number(params.modelId));
     if (!model) {
-        return <div>Model not found</div>;
+        router.push(`/models`);
+        return null;
     }
 
     return (
-        <div className="flex w-full flex-col bg-white rounded-xl ring-1 ring-gray-200 p-20 pt-6 pb-6">
-            Model: {model.name}
-        </div>
+        <PageContainer title={`"${model.name}" model details`}>
+            {/* Loading Indicator */}
+            <TrainingFetcher delay={1000} />
+            {/* Top Buttons */}
+            <div className="mb-8">
+                <ActionBar model={model} />
+            </div>
+
+            {/* Main Grid */}
+            <div className="flex flex-col lg:flex-row gap-8">
+                {/* Model Information */}
+                <ModelInformationCard model={model} />
+                <UseModelCard model={model} />
+                {/* Try your model */}
+            </div>
+        </PageContainer>
     );
 };
 
-export default Model;
+export default ModelDetailsPage;

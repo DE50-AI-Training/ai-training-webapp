@@ -1,6 +1,7 @@
 "use client";
 
 import NewDatasetForm from "@/components/datasets/NewDatasetForm";
+import PageContainer from "@/components/PageContainer";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -21,9 +22,9 @@ const NewDatasetPage = () => {
     }, [datasetIdParam, router]);
 
     return (
-        <div className="bg-white rounded-xl ring-1 ring-gray-200 p-20 pt-6 pb-6">
+        <PageContainer title="New Dataset">
             <NewDatasetForm fromDataset={datasetId} />
-        </div>
+        </PageContainer>
     );
 };
 
