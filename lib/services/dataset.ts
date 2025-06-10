@@ -29,6 +29,24 @@ export const uploadDataset = async (file: File): Promise<Dataset> => {
     return data as Dataset;
 };
 
+export const duplicateDataset = async (datasetId: number): Promise<Dataset> => {
+    const response = await fetch(
+        `${BACKEND_URL}/datasets/${datasetId}/duplicate`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({}),
+        },
+    );
+    if (!response.ok) {
+        throw new Error("Failed to duplicate dataset");
+    }
+    const data = await response.json();
+    return data as Dataset;
+};
+
 export const createDataset = async (
     datasetId: number,
     dataset: DatasetCreate,
@@ -63,4 +81,14 @@ export const updateDataset = async (
     }
     const data = await response.json();
     return data as Dataset;
+};
+
+export const deleteDataset = async (datasetId: number): Promise<void> => {
+    const response = await fetch(`${BACKEND_URL}/datasets/${datasetId}`, {
+        method: "DELETE",
+    });
+    if (!response.ok) {
+        throw new Error("Failed to delete dataset");
+    }
+    return;
 };
