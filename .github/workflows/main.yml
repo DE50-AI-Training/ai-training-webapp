@@ -28,3 +28,6 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/de50-ai-training/ai-training-webapp:latest
+          build-args: |
+            NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
+            SERVER_SIDE_BACKEND_URL=http://ai-training-backend:8000
