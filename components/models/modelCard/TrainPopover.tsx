@@ -1,9 +1,9 @@
 "use client"
 
 import { Model } from "@/lib/models/model";
-import { Label } from "../ui/Label";
-import { Input } from "../ui/Input";
-import { Button } from "../ui/Button";
+import { Label } from "../../ui/Label";
+import { Input } from "../../ui/Input";
+import { Button } from "../../ui/Button";
 import { useTraining } from "@/lib/hooks/useTraining";
 import { useState } from "react";
 

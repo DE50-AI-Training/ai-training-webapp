@@ -14,10 +14,10 @@ import {
 } from "@heroicons/react/24/outline";
 import { useTraining } from "@/lib/hooks/useTraining";
 import { TrainingStatus } from "@/lib/models/training";
-import { Spinner } from "../ui/Spinner";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
+import { Spinner } from "../../ui/Spinner";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/Popover";
 import TrainPopover from "./TrainPopover";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/Tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/Tooltip";
 import {
     DropdownMenu,
     DropdownMenuContent,

@@ -1,6 +1,6 @@
 "use client";
 
-import DatasetCard from "@/components/datasetCard/DatasetCard";
+import DatasetCard from "@/components/datasets/DatasetCard";
 import {
     Select,
     SelectContent,

@@ -1,6 +1,6 @@
 "use client";
 
-import ModelCard from "@/components/modelCard/ModelCard";
+import ModelCard from "@/components/models/modelCard/ModelCard";
 import {
     Select,
     SelectContent,

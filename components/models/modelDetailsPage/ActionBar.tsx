@@ -18,7 +18,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/Popover";
-import TrainPopover from "@/components/modelCard/TrainPopover";
+import TrainPopover from "@/components/models/modelCard/TrainPopover";
 
 const ActionBar = ({ model }: { model: Model }) => {
     const router = useRouter();
