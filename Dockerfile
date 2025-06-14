@@ -18,10 +18,6 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Variables d'environnement nécessaires pour le build Next.js
-ARG NEXT_PUBLIC_BACKEND_URL
-ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
-
 # Build l'application Next.js
 RUN npm run build
 
@@ -30,10 +26,6 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-
-# Variables d'environnement pour l'exécution
-ARG NEXT_PUBLIC_BACKEND_URL
-ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
 
 # Crée un utilisateur non-root pour la sécurité
 RUN addgroup --system --gid 1001 nodejs
