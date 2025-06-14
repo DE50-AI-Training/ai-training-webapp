@@ -1,9 +1,9 @@
-import { BACKEND_URL } from "../env";
+import { BACKEND_URL, SERVER_SIDE_BACKEND_URL } from "../env";
 import { InferConfig, Model, ModelCreate, ModelUpdate } from "../models/model";
 import { Training, TrainingStart } from "../models/training";
 
 export const getModels = async (): Promise<Model[]> => {
-    const response = await fetch(`${BACKEND_URL}/models`, {
+    const response = await fetch(`${SERVER_SIDE_BACKEND_URL}/models`, {
         cache: "no-store",
     });
     if (!response.ok) {

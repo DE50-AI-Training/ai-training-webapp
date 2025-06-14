@@ -2,6 +2,7 @@
 
 import { datasetsAtom } from "@/lib/atoms/datasetAtoms";
 import { modelsAtom } from "@/lib/atoms/modelAtoms";
+import { Dataset } from "@/lib/models/dataset";
 import { Model } from "@/lib/models/model";
 import { useHydrateAtoms } from "jotai/utils";
 import { ReactNode } from "react";

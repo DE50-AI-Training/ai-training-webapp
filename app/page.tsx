@@ -73,10 +73,10 @@ const Home = () => {
                     a single line of code.
                 </p>
                 <p className="text-sm text-gray-500 max-w-2xl mx-auto mb-6">
-                    Whether you're analyzing customer data or experimenting with
+                    {`Whether you're analyzing customer data or experimenting with
                     machine learning, SimplifyAI gives you the tools to import
                     data, train models, and generate predictions — all in a few
-                    clicks.
+                    clicks.`}
                 </p>
             </div>
 
@@ -179,8 +179,6 @@ const Home = () => {
                         <ArrowRightIcon className="h-5 w-5 text-gray-400 group-hover:text-blue-600 transition-all group-hover:translate-x-1" />
                     </div>
                 </div>
-
-                
             </div>
 
             <Separator className="my-4" />
