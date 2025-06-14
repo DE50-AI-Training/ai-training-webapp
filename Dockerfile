@@ -31,6 +31,9 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
+# Variables d'environnement pour l'exécution
+ARG NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
+ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
 
 # Crée un utilisateur non-root pour la sécurité
 RUN addgroup --system --gid 1001 nodejs
