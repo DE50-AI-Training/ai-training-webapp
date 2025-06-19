@@ -9,17 +9,16 @@ const TrainingFetcher = ({ delay }: { delay: number }) => {
     const [trainings, setTrainings] = useAtom(trainingsAtom);
     const count = Object.keys(trainings).length;
     const [loading, setLoading] = useState(true);
-    const [, updateModel] = useAtom(updateModelAtom);
-
-    const updateModelCache = (modelId: number) => {
-        getModel(modelId).then((model) => {
-            if (model) {
-                updateModel(model);
-            }
-        });
-    };
+    const updateModel = useSetAtom(updateModelAtom);
 
     useEffect(() => {
+        const updateModelCache = (modelId: number) => {
+            getModel(modelId).then((model) => {
+                if (model) {
+                    updateModel(model);
+                }
+            });
+        };
         const fetchTrainings = async () => {
             try {
                 const newTrainings = await getTrainings();
@@ -32,16 +31,19 @@ const TrainingFetcher = ({ delay }: { delay: number }) => {
                         },
                         {},
                     );
-                Object.keys(trainings).forEach((modelId) => {
-                    if (!trainingMap[Number(modelId)]) {
-                        console.log(
-                            `Training with modelId ${modelId} not found in new trainings`,
-                        );
-                        updateModelCache(Number(modelId));
-                    }
+
+                setTrainings((currentTrainings) => {
+                    Object.keys(currentTrainings).forEach((modelId) => {
+                        if (!trainingMap[Number(modelId)]) {
+                            console.log(
+                                `Training with modelId ${modelId} not found in new trainings`,
+                            );
+                            updateModelCache(Number(modelId));
+                        }
+                    });
+                    return trainingMap;
                 });
 
-                setTrainings(trainingMap);
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching trainings:", error);
@@ -54,7 +56,7 @@ const TrainingFetcher = ({ delay }: { delay: number }) => {
             const intervalId = setInterval(fetchTrainings, delay);
             return () => clearInterval(intervalId);
         }
-    }, [count]);
+    }, [count, delay, setTrainings, updateModel]);
 
     return null;
 };

@@ -113,7 +113,7 @@ const Models = () => {
                         <Checkbox
                             id="runningModels"
                             checked={showRunningModels}
-                            onCheckedChange={setShowRunningModels}
+                            onCheckedChange={(checked) => setShowRunningModels(checked === true)}
                         />
                         <Label htmlFor="runningModels">
                             Running models only

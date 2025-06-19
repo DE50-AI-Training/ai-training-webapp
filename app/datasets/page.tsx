@@ -79,7 +79,7 @@ const Datasets = () => {
                         <Checkbox
                             id="runningModels"
                             checked={showUsedInModels}
-                            onCheckedChange={setShowUsedInModels}
+                            onCheckedChange={(checked) => setShowUsedInModels(checked === true)}
                         />
                         <Label htmlFor="runningModels">
                             Only datasets used by a model

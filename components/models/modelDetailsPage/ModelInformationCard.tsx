@@ -166,7 +166,7 @@ const ModelInformationCard = ({ model }: { model: Model }) => {
                             <DialogContent className="bg-white max-w-xl">
                                 <DialogHeader>
                                     <DialogTitle>
-                                        "{model.name}" layers
+                                        {`"${model.name}" layers`}
                                     </DialogTitle>
                                 </DialogHeader>
                                 <div className="overflow-auto">
