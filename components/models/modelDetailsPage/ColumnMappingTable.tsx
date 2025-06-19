@@ -36,6 +36,7 @@ const ColumnMappingTable = ({
     selectedColumns,
     onColumnMapping,
 }: ColumnMappingTableProps) => {
+    // Filtre les colonnes compatibles en évitant les doublons de sélection
     const getCompatibleColumns = (
         targetColumnType: string,
         currentModelColumnIndex?: number,

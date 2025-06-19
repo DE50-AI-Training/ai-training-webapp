@@ -36,7 +36,7 @@ const UseModelCard = ({ model }: { model: Model }) => {
 
     const [uploadedDataset, setUploadedDataset] = useState<Dataset | null>();
 
-    // Store the selected uploadedDataset column for each dataset column
+    // Stockage des mappings colonnes uploadées -> colonnes du modèle
     const [selectedColumns, setSelectedColumns] = useState<
         Record<number, number | null>
     >({});

@@ -16,6 +16,7 @@ interface MLPLayersTableProps {
 }
 
 export const MLPLayersTable = ({ layers, setLayers }: MLPLayersTableProps) => {
+    // Séparation des couches : entrée, cachées, sortie
     const inputLayer = layers[0];
     const outputLayer = layers[layers.length - 1];
     const hiddenLayers = layers.slice(1, -1);

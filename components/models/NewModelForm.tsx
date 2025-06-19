@@ -64,12 +64,15 @@ const NewModelForm = ({
         }
         setIsSubmitting(true);
         try {
+            // Construction de l'objet modèle avec architecture conditionnelle
             const newModel: ModelCreate = {
                 datasetId,
                 inputColumns: columnsAsParameters.map((col) =>
                     Number(col.value),
                 ),
-                outputColumns: columnToClassify ? [Number(columnToClassify)] : [],
+                outputColumns: columnToClassify
+                    ? [Number(columnToClassify)]
+                    : [],
                 name,
                 problemType,
                 mlpArchitecture:
@@ -128,12 +131,17 @@ const NewModelForm = ({
                   value: index.toString(),
                   label: column.name,
               }))
-              .filter((option) => {
+              .filter((option, index) => {
+                  const column = selectedDataset.columns[index];
                   const isTargetColumn = columnToClassify === option.value;
                   const isInParameters = columnsAsParameters.some(
                       (col) => col.value === option.value,
                   );
-                  return !isTargetColumn && !isInParameters;
+                  return (
+                      column.type === "numeric" &&
+                      !isTargetColumn &&
+                      !isInParameters
+                  );
               })
         : [];
 
@@ -153,11 +161,16 @@ const NewModelForm = ({
 
     useEffect(() => {
         if (problemType === "classification") {
-            const selectedColumnIndex = columnToClassify ? Number(columnToClassify) : -1;
+            const selectedColumnIndex = columnToClassify
+                ? Number(columnToClassify)
+                : -1;
 
-            const totalUniqueValues = selectedColumnIndex >= 0 && selectedDataset?.columns?.[selectedColumnIndex]
-                ? selectedDataset.columns[selectedColumnIndex].uniqueValues || 0
-                : 0;
+            const totalUniqueValues =
+                selectedColumnIndex >= 0 &&
+                selectedDataset?.columns?.[selectedColumnIndex]
+                    ? selectedDataset.columns[selectedColumnIndex]
+                          .uniqueValues || 0
+                    : 0;
 
             setLayers((prev) => {
                 const newLayers = [...prev];
@@ -181,9 +194,9 @@ const NewModelForm = ({
             setdatasetId(fromModel.datasetId || null);
             setTrainingFraction(fromModel.trainingFraction || 0.8);
             setColumnToClassify(
-                fromModel.outputColumns.length > 0 
-                    ? fromModel.outputColumns[0].toString() 
-                    : ""
+                fromModel.outputColumns.length > 0
+                    ? fromModel.outputColumns[0].toString()
+                    : "",
             );
             setColumnsAsParameters(
                 fromModel.inputColumns.map((col) => ({
@@ -254,13 +267,19 @@ const NewModelForm = ({
                         />
                         {/* Commented select elements */}
                         <div className="relative flex gap-2 items-center max-w-sm mx-auto">
-                            <Select value={columnToClassify} onValueChange={setColumnToClassify}>
+                            <Select
+                                value={columnToClassify}
+                                onValueChange={setColumnToClassify}
+                            >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Target column" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {targetColumnOptions.map((option) => (
-                                        <SelectItem key={option.value} value={option.value}>
+                                        <SelectItem
+                                            key={option.value}
+                                            value={option.value}
+                                        >
                                             {option.label}
                                         </SelectItem>
                                     ))}
@@ -272,12 +291,10 @@ const NewModelForm = ({
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p>
-                                        Select the column that the model
-                                        should learn to predict.
+                                        Select the column that the model should
+                                        learn to predict.
                                     </p>
-                                    <p>
-                                        This is usually your output or label.
-                                    </p>
+                                    <p>This is usually your output or label.</p>
                                     <span className="block mt-2 font-bold text-violet-300">
                                         Need help?
                                     </span>{" "}

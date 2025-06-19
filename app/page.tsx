@@ -1,12 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/Button";
 import { Separator } from "@/components/ui/Separator";
 import {
     Tooltip,
     TooltipTrigger,
     TooltipContent,
-    TooltipProvider,
 } from "@/components/ui/Tooltip";
 
 import { useRouter } from "next/navigation";
@@ -89,7 +87,7 @@ const Home = () => {
                 >
                     <p className="text-xl font-semibold">{models.length}</p>
                     <span className="text-sm text-gray-700">
-                        Trained Models
+                        Created Models
                     </span>
                 </div>
 
