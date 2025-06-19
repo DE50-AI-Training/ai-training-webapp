@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/Select";
 
+// Composant de sélection réutilisable avec mémorisation pour éviter les re-renders
 const FormSelect = ({
     value,
     onChange,

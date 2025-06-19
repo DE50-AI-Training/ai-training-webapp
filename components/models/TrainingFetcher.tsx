@@ -12,6 +12,7 @@ const TrainingFetcher = ({ delay }: { delay: number }) => {
     const updateModel = useSetAtom(updateModelAtom);
 
     useEffect(() => {
+        // Met à jour le cache du modèle quand l'entraînement se termine
         const updateModelCache = (modelId: number) => {
             getModel(modelId).then((model) => {
                 if (model) {
@@ -19,10 +20,12 @@ const TrainingFetcher = ({ delay }: { delay: number }) => {
                 }
             });
         };
+        
         const fetchTrainings = async () => {
             try {
                 const newTrainings = await getTrainings();
 
+                // Transformation en map pour un accès efficace par modelId
                 const trainingMap: Record<number, Training> =
                     newTrainings.reduce(
                         (acc: Record<number, Training>, training: Training) => {
@@ -33,6 +36,7 @@ const TrainingFetcher = ({ delay }: { delay: number }) => {
                     );
 
                 setTrainings((currentTrainings) => {
+                    // Détecte les entraînements qui se sont terminés
                     Object.keys(currentTrainings).forEach((modelId) => {
                         if (!trainingMap[Number(modelId)]) {
                             console.log(

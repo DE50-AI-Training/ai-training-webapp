@@ -20,6 +20,7 @@ export const useTraining = (
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    // Récupération de l'état d'entraînement actuel pour ce modèle
     const training: Training | null = trainings[modelId] ?? null;
 
     const train = async (trainingParams: TrainingStart) => {
@@ -44,6 +45,7 @@ export const useTraining = (
         setError(null);
         try {
             await stopTraining(modelId);
+            // Mise à jour optimiste du statut avant confirmation serveur
             const newTraining: Training = { ...training, status: "stopping" };
             updateTraining({ modelId, training: newTraining });
         } catch (err: any) {

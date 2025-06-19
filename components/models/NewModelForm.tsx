@@ -64,6 +64,7 @@ const NewModelForm = ({
         }
         setIsSubmitting(true);
         try {
+            // Construction de l'objet modèle avec architecture conditionnelle
             const newModel: ModelCreate = {
                 datasetId,
                 inputColumns: columnsAsParameters.map((col) =>

@@ -2,6 +2,8 @@ import { BACKEND_URL, SERVER_SIDE_BACKEND_URL } from "../env";
 import { InferConfig, Model, ModelCreate, ModelUpdate } from "../models/model";
 import { Training, TrainingStart } from "../models/training";
 
+// Services API pour la gestion des modèles ML
+
 export const getModels = async (): Promise<Model[]> => {
     const response = await fetch(`${SERVER_SIDE_BACKEND_URL}/models`, {
         cache: "no-store",
@@ -24,6 +26,7 @@ export const getModel = async (modelId: number): Promise<Model> => {
     return data;
 };
 
+// Fonctions d'export - ouvrent dans un nouvel onglet
 export const downloadWeights = async (modelId: number) =>
     window.open(`${BACKEND_URL}/models/${modelId}/weights`, "_blank");
 
