@@ -6,22 +6,22 @@ const videoData = [
     {
         title: "1. Import a dataset",
         desc: "Learn how to import your dataset and prepare it for training.",
-        url: "https://www.youtube.com/embed/mdgMKjbCHMY",
+        url: "https://www.youtube.com/embed/i59y_hRkniQ",
     },
     {
         title: "2. Create a model instance",
         desc: "Understand model configurations and create your own instance step by step.",
-        url: "https://www.youtube.com/embed/mdgMKjbCHMY",
+        url: "https://www.youtube.com/embed/YgmfSZsf59E",
     },
     {
-        title: "3. Follow training",
-        desc: "Track your model's training progress and understand key performance metrics.",
-        url: "https://www.youtube.com/embed/mdgMKjbCHMY",
+        title: "3. Train your model",
+        desc: "Track your model's training progress.",
+        url: "https://www.youtube.com/embed/KS9f0j_TESA",
     },
     {
         title: "4. Use a model instance",
-        desc: "Deploy and reuse your trained model to make predictions on your own data.",
-        url: "https://www.youtube.com/embed/mdgMKjbCHMY",
+        desc: "Use your trained model to make predictions on your own data.",
+        url: "https://www.youtube.com/embed/SdsBVioine4",
     },
 ];
 
@@ -54,8 +54,10 @@ const GuidePage = () => {
                                 className="w-full h-full"
                                 src={video.url}
                                 title={video.title}
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                 allowFullScreen
+                                referrerPolicy="strict-origin-when-cross-origin"
                             />
                         </div>
                     </div>
